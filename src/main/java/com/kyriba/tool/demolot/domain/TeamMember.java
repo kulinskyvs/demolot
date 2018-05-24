@@ -26,18 +26,18 @@ public class TeamMember {
 
     @Column(name = "NAME", nullable = false)
     @NotBlank
-    @Length(max = NAME_MAX_LENGTH)
+    @Length(min = 1, max = NAME_MAX_LENGTH)
     private String name;
 
     @Column(name = "SURNAME", nullable = false)
     @NotBlank
-    @Length(max = SURNAME_MAX_LENGTH)
+    @Length(min = 1, max = SURNAME_MAX_LENGTH)
     private String surname;
 
     @Column(name = "EMAIL", nullable = false)
     @Email
     @NotEmpty
-    @Length(max = EMAIL_MAX_LENGTH)
+    @Length(min = 1, max = EMAIL_MAX_LENGTH)
     private String email;
 
     @Column(name = "IS_ACTIVE", nullable = false)

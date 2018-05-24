@@ -3,7 +3,7 @@
  * The content of this file is copyrighted by Kyriba Corporation and can not be *
  * reproduced, distributed, altered or used in any form, in whole or in part.   *
  * Date        Author  Changes                                                  *
- * 5/23/2018     M-VKU   Initial                                                  *
+ * 5/24/2018     M-VKU   Initial                                                  *
  * Copyright 2000 - 2018 Kyriba Corp. All Rights Reserved.                   *
  ********************************************************************************/
 package com.kyriba.tool.demolot.controller;
@@ -19,12 +19,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @version 1.0
  */
 @Controller
-public class ApplicationController
+public class DrawController
 {
+  static final String ROOT_URL = "/draws";
 
-  @RequestMapping("/")
-  String home(ModelMap modal)
+
+  @RequestMapping(ROOT_URL)
+  String draws(ModelMap modal)
   {
-    return "index";
+    return "draws";
   }
+
+
+  @RequestMapping(ROOT_URL + "/{drawId}")
+  String draw(@PathVariable("drawId") final long drawId, ModelMap modal)
+  {
+
+    //TODO:!!!
+    modal.addAttribute("drawId", drawId);
+    return "draw";
+  }
+
 }

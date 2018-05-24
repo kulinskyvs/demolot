@@ -1,54 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="author" content="">
+<#include "/tiles/header.ftl">
 
-        <title>Demolot</title>
-        <link href="/css/bootstrap.css" rel="stylesheet"/>
-    </head>
-    <body>
+<div class="container mt-3">
 
-     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-          <a class="navbar-brand" href="/">Home</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+    <div class="row">
+      <div class="col-md-6 text-left">
+         <h2>Team members</h2>
+      </div>
+      <div class="col-md-6 text-right">
+         <a role="button" class="btn btn-secondary btn-success" href="/teamembers/form">Create</a>
+      </div>
+    </div>
 
-          <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="${team_url}">Team <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="${draws_url}">Draws</a>
-              </li>
-            </ul>
-          </div>
-     </nav>
+    <div class="row">
+        <div class="table-responsive">
+          <table class="table table-striped table-sm">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Email</th>
+                <th>Active?</th>
+                <th/>
+              </tr>
+            </thead>
+            <tbody>
+              <#list members as member>
+                <tr>
+                  <td>${member.id}</td>
+                  <td>${member.name}</td>
+                  <td>${member.surname}</td>
+                  <td>${member.email}</td>
+                  <td>${member.active?string('yes', 'no')}</td>
+                  <td style="width:15%;text-align:right">
+                   <a role="button" class="btn btn-warning" href="/teamembers/form/${member.id}">Edit</a> &nbsp;
+                   <button class="btn btn-danger"  onclick="deleteMember(${member.id})">Delete</button>
+                  </td>
+                </tr>
+              </#list>
+            </tbody>
+           </table>
+        </div>
+    </div>
 
-    <main role="main">
-      <div class="container">
-          <div class="row"/>
-          <div class="row">
-            <div class="col-md-12">
-              <h2>Team</h2>
-            </div>
-          </div>
+</div> <!-- /container -->
 
-          <hr>
-      </div> <!-- /container -->
-    </main>
 
-    <footer class="container">
-      <p>&copy; Kyriba 2018</p>
-    </footer>
+<script type="text/javascript">
+    function deleteMember(memberId) {
+      doDeleteAndReload(
+        'Do you really want to delete the selected team member?',
+        "/teamembers/"+memberId,
+        '/teamembers'
+      );
+    }
+</script>
 
-    <!-- jQuery and bootstap -->
-    <script src="/js/lib/jquery-3.1.0.min.js"></script>
-    <script src="/js/lib/bootstrap.min.js"></script>
-
-    </body>
-</html>
+<#include "tiles/footer.ftl">
