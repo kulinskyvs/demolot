@@ -9,7 +9,7 @@
 package com.kyriba.tool.demolot.controller;
 
 import com.kyriba.tool.demolot.domain.TeamMember;
-import com.kyriba.tool.demolot.service.TeamMemberRepository;
+import com.kyriba.tool.demolot.repository.TeamMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.springframework.data.domain.Sort.Order.asc;
 
@@ -71,11 +72,11 @@ public class TeamMemberController
 
 
   @RequestMapping(value = ROOT_URL, method = RequestMethod.POST)
-  public String saveMember(@Valid @ModelAttribute("member") TeamMember member,
-                           BindingResult result,
-                           ModelMap modelMap)
+  public String submitMember(@Valid @ModelAttribute(MODEL_MEMBER) TeamMember member,
+                             BindingResult result,
+                             ModelMap modelMap)
   {
-    if (result.hasErrors()) {
+    if (result.hasErrors() || isUniquenessViolated(member, modelMap)) {
       modelMap.put(MODEL_MEMBER, member);
       modelMap.put(MODEL_OPERATION, Objects.isNull(member.getId()) ? "Create" : "Edit");
       return VIEW_MEMBER;
@@ -92,8 +93,21 @@ public class TeamMemberController
   @ResponseStatus(value = HttpStatus.OK)
   public void deleteMember(@PathVariable("memberId") final long memberId)
   {
-    //TODO: errors??
+    //TODO: handle EmptyResultDataAccessException??
     teamMemberRepository.deleteById(memberId);
   }
 
+
+  private boolean isUniquenessViolated(TeamMember member, ModelMap modelMap)
+  {
+    boolean isViolated = Optional
+        .ofNullable(teamMemberRepository.findByNameAndSurname(member.getName(), member.getSurname()))
+        .map(foundMember -> !foundMember.equalsById(member))
+        .orElse(false);
+
+    if (isViolated) {
+      modelMap.put("validationError", "A member with the same name and surname already exists");
+    }
+    return isViolated;
+  }
 }

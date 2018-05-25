@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <TEAM_MEMBER id="1" name="Vasil" surname="Pupkin" email="vpupkin@gmail.com" is_active="true"/>
+    <TEAM_MEMBER id="2" name="Ivan" surname="Ivanov" email="ivanov@gmail.com" is_active="false"/>
+    <TEAM_MEMBER id="3" name="Sidor" surname="Sidorov" email="sidorov@gmail.com" is_active="true"/>
+
+
+    <DEMO id="1" title="Demo1" planned_date="2018-05-25"/>
+    <DEMO_TASK id="1" key="demo1task1" title="Demo 1: task 1" DEMO_ID="1" OWNER_ID="1"/>
+    <DEMO_TASK id="2" key="demo1task2" title="Demo 1: task 2" DEMO_ID="1" OWNER_ID="2"/>
+
+    <DEMO id="2" title="Demo2" planned_date="2018-05-25" summary="Summary"
+          link="https://bitbucket.org/kyridev/kyc-solution/pull-requests/"/>
+    <DEMO_TASK id="3" key="demo2task1" title="Demo 2: task 1" DEMO_ID="2" OWNER_ID="1"/>
+</dataset>

@@ -26,7 +26,7 @@
                 <a class="nav-link" href="/teamembers" >Team <span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/draws">Draws</a>
+                <a class="nav-link" href="/demos">Demos</a>
               </li>
             </ul>
           </div>

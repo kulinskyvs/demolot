@@ -1,4 +1,4 @@
-package com.kyriba.tool.demolot.service;
+package com.kyriba.tool.demolot.repository;
 
 import com.kyriba.tool.demolot.domain.TeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +19,7 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long>
    */
   List<TeamMember> findByActive(boolean active);
 
-  
+
   /**
    * Finds all the active team members
    *
@@ -29,4 +29,14 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long>
   {
     return findByActive(true);
   }
+
+
+  /**
+   * Finds a team member by his name and surname
+   *
+   * @param name member name
+   * @param surName member surname
+   * @return found team member (if any)
+   */
+  TeamMember findByNameAndSurname(String name, String surName);
 }
