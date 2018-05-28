@@ -7,11 +7,11 @@
          <h2>Spring demo draws</h2>
       </div>
       <div class="col-md-6 text-right">
-         <a role="button" class="btn btn-secondary btn-success" href="/demos/form">Create</a>
+         <a role="button" class="btn btn-primary" href="/demos/form">Create</a>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" style="min-height: 500px;">
         <div class="table-responsive">
           <table class="table table-striped table-sm">
             <thead>
@@ -19,6 +19,7 @@
                 <th>#</th>
                 <th>Title</th>
                 <th>Date</th>
+                <th>Draw status</th>
                 <th/>
               </tr>
             </thead>
@@ -34,9 +35,26 @@
                      </#if>
                   </td>
                   <td>${demo.plannedDate}</td>
-                  <td style="width:15%;text-align:right">
-                   <a role="button" class="btn btn-warning" href="/demos/form/${demo.id}">Edit</a> &nbsp;
-                   <button class="btn btn-danger"  onclick="deleteDemo(${demo.id})">Delete</button>
+                  <td>${demo.drawStatus.description}</td>
+                  <td style="width:25%;text-align:right;white-space:nowrap">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-secomdary dropdown-toggle" data-toggle="dropdown"
+                                  aria-haspopup="true" aria-expanded="false">
+                            Actions..
+                          </button>
+                          <div class="dropdown-menu">
+                              <#if demo.drawStatus.name() == "PREPARATION">
+                                 <a class="dropdown-item" href="/demos/${demo.id}/form">Edit</a>
+                                 <a class="dropdown-item"  href="/demos/${demo.id}/formtask">Define tasks</a>
+                                 <div class="dropdown-divider"></div>
+                                 <button class="dropdown-item" type="button" onclick="deleteDemo(${demo.id})">Delete</button>
+                                 <div class="dropdown-divider"></div>
+                              </#if>
+                              <#if demo.drawStatus.name() != "FINISHED">
+                                 <a class="dropdown-item" href="#">Play</a>
+                              </#if>
+                          </div>
+                        </div>
                   </td>
                 </tr>
               </#list>

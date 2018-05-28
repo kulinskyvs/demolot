@@ -47,6 +47,7 @@
 
     <!-- jQuery and bootstap -->
     <script src="/js/lib/jquery.3.3.1.min.js"></script>
+    <script src="/js/lib/popper.js"></script>
     <script src="/js/lib/bootstrap.4.1.1.min.js"></script>
     <script src="/js/demolot.js"></script>
 

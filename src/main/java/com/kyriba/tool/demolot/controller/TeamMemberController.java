@@ -19,9 +19,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Objects;
 import java.util.Optional;
 
+import static com.kyriba.tool.demolot.controller.ControllerConstants.*;
 import static org.springframework.data.domain.Sort.Order.asc;
 
 
@@ -33,7 +33,6 @@ import static org.springframework.data.domain.Sort.Order.asc;
 public class TeamMemberController
 {
   private static final String ROOT_URL = "/teamembers";
-  private static final String MODEL_OPERATION = "operation";
   private static final String MODEL_MEMBER = "member";
   private static final String VIEW_MEMBER = "teammember";
 
@@ -56,17 +55,17 @@ public class TeamMemberController
   public String showCreateForm(ModelMap modelMap)
   {
     modelMap.put(MODEL_MEMBER, new TeamMember());
-    modelMap.put(MODEL_OPERATION, "Create");
+    modelMap.put(MODEL_OPERATION, MODEL_OPERATION_CREATE);
     return VIEW_MEMBER;
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/form/{memberId}", method = RequestMethod.GET)
+  @RequestMapping(value = ROOT_URL + "/{memberId}/form", method = RequestMethod.GET)
   public String showEditForm(@PathVariable("memberId") final long memberId,
                              ModelMap modelMap)
   {
     modelMap.put(MODEL_MEMBER, teamMemberRepository.findById(memberId));
-    modelMap.put(MODEL_OPERATION, "Edit");
+    modelMap.put(MODEL_OPERATION, MODEL_OPERATION_EDIT);
     return VIEW_MEMBER;
   }
 
@@ -78,7 +77,7 @@ public class TeamMemberController
   {
     if (result.hasErrors() || isUniquenessViolated(member, modelMap)) {
       modelMap.put(MODEL_MEMBER, member);
-      modelMap.put(MODEL_OPERATION, Objects.isNull(member.getId()) ? "Create" : "Edit");
+      modelMap.put(MODEL_OPERATION, ControllerConstants.modelOperation(member));
       return VIEW_MEMBER;
     }
     else {

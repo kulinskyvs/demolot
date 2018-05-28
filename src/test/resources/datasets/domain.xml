@@ -5,11 +5,15 @@
     <TEAM_MEMBER id="3" name="Sidor" surname="Sidorov" email="sidorov@gmail.com" is_active="true"/>
 
 
-    <DEMO id="1" title="Demo1" planned_date="2018-05-25"/>
+    <DEMO id="1" title="Demo1" planned_date="2018-05-25" DRAW_STATUS="IN_PROGRESS"/>
     <DEMO_TASK id="1" key="demo1task1" title="Demo 1: task 1" DEMO_ID="1" OWNER_ID="1"/>
     <DEMO_TASK id="2" key="demo1task2" title="Demo 1: task 2" DEMO_ID="1" OWNER_ID="2"/>
 
     <DEMO id="2" title="Demo2" planned_date="2018-05-25" summary="Summary"
-          link="https://bitbucket.org/kyridev/kyc-solution/pull-requests/"/>
+          link="https://bitbucket.org/kyridev/kyc-solution/pull-requests/"
+          DRAW_STATUS="PREPARATION"/>
     <DEMO_TASK id="3" key="demo2task1" title="Demo 2: task 1" DEMO_ID="2" OWNER_ID="1"/>
+
+    <DEMO id="3" title="Demo3" planned_date="2018-05-25" DRAW_STATUS="FINISHED"/>
+    <DEMO_TASK id="4" key="demo3task1" title="Demo 3: task 1" DEMO_ID="3" OWNER_ID="1"/>
 </dataset>

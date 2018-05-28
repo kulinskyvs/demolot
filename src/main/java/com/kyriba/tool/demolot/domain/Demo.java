@@ -19,6 +19,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
@@ -55,7 +56,7 @@ public class Demo implements HasLongId
 
   @Column(name = "SUMMARY")
   @Length(max = SUMMARY_MAX_LENGTH)
-    private String summary;
+  private String summary;
 
 
   @Column(name = "LINK")
@@ -66,6 +67,11 @@ public class Demo implements HasLongId
 
   @OneToMany(mappedBy = "demo", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<DemoTask> tasks;
+
+
+  @Column(name = "DRAW_STATUS", length = 30)
+  @Enumerated(EnumType.STRING)
+  private DrawStatus drawStatus = DrawStatus.PREPARATION;
 
 
   public Demo()
@@ -145,6 +151,18 @@ public class Demo implements HasLongId
   }
 
 
+  public DrawStatus getDrawStatus()
+  {
+    return drawStatus;
+  }
+
+
+  public void setDrawStatus(DrawStatus drawStatus)
+  {
+    this.drawStatus = drawStatus;
+  }
+
+
   @Override
   public boolean equals(Object o)
   {
@@ -174,6 +192,18 @@ public class Demo implements HasLongId
         .append("title", title)
         .append("plannedDate", plannedDate)
         .toString();
+  }
+
+
+  public DemoTask getTaskById(long taskId) throws NoSuchElementException
+  {
+    return getTasks()
+        .stream()
+        .filter(task -> task.getId() == taskId)
+        .findFirst()
+        .orElseThrow(() -> new NoSuchElementException(
+            "Unable to find a task with id " + taskId + " into a demo with id [" + getId() + "]")
+        );
   }
 
 }

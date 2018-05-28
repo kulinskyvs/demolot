@@ -7,13 +7,13 @@
          <h2>Team members</h2>
       </div>
       <div class="col-md-6 text-right">
-         <a role="button" class="btn btn-secondary btn-success" href="/teamembers/form">Create</a>
+         <a role="button" class="btn btn-primary" href="/teamembers/form">Create</a>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" style="min-height: 500px;">
         <div class="table-responsive">
-          <table class="table table-striped table-sm">
+          <table class="table table-striped table-sm table-hover">
             <thead>
               <tr>
                 <th>#</th>
@@ -32,15 +32,23 @@
                   <td>${member.surname}</td>
                   <td>${member.email}</td>
                   <td>${member.active?string('yes', 'no')}</td>
-                  <td style="width:15%;text-align:right">
-                   <a role="button" class="btn btn-warning" href="/teamembers/form/${member.id}">Edit</a> &nbsp;
-                   <button class="btn btn-danger"  onclick="deleteMember(${member.id})">Delete</button>
+                  <td style="width:25%;text-align:right;white-space:nowrap">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-secomdary dropdown-toggle" data-toggle="dropdown"
+                                  aria-haspopup="true" aria-expanded="false">
+                            Actions..
+                          </button>
+                          <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/teamembers/${member.id}/form">Edit</a>
+                            <button class="dropdown-item" type="button" onclick="deleteMember(${member.id})">Delete</button>
+                          </div>
+                        </div>
                   </td>
                 </tr>
               </#list>
             </tbody>
            </table>
-        </div>
+       </div>
     </div>
 
 </div> <!-- /container -->

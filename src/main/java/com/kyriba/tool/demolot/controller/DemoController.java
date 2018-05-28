@@ -9,20 +9,26 @@
 package com.kyriba.tool.demolot.controller;
 
 import com.kyriba.tool.demolot.domain.Demo;
-import com.kyriba.tool.demolot.repository.DemoRepository;
+import com.kyriba.tool.demolot.domain.DemoTask;
+import com.kyriba.tool.demolot.domain.DrawStatus;
+import com.kyriba.tool.demolot.domain.TeamMember;
+import com.kyriba.tool.demolot.repository.TeamMemberRepository;
+import com.kyriba.tool.demolot.service.DemoDrawService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
-import static org.springframework.data.domain.Sort.Order.desc;
+import static com.kyriba.tool.demolot.controller.ControllerConstants.*;
+import static com.kyriba.tool.demolot.controller.TeamMemberPropertyEditor.DEFAULT_FORMATTER;
 
 
 /**
@@ -33,21 +39,24 @@ import static org.springframework.data.domain.Sort.Order.desc;
 public class DemoController
 {
   private static final String ROOT_URL = "/demos";
-  private static final String MODEL_OPERATION = "operation";
   private static final String MODEL_DEMO = "demo";
   private static final String VIEW_DEMO = "demo";
 
+  private static final String MODEL_MEMBERS = "members";
+  private static final String MODEL_DEMO_TASK = "task";
+  private static final String VIEW_DEMO_TASK = "task";
+
   @Autowired
-  private DemoRepository demoRepository;
+  private DemoDrawService demoDrawService;
+
+  @Autowired
+  private TeamMemberRepository teamMemberRepository;
 
 
   @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
   String showAllDemos(ModelMap modal)
   {
-    modal.addAttribute(
-        "demos",
-        demoRepository.findAll(Sort.by(desc("id")))
-    );
+    modal.addAttribute("demos", demoDrawService.findAll());
 
     return "demos";
   }
@@ -60,17 +69,17 @@ public class DemoController
     newDemo.setPlannedDate(LocalDate.now());
 
     modelMap.put(MODEL_DEMO, newDemo);
-    modelMap.put(MODEL_OPERATION, "Create");
+    modelMap.put(MODEL_OPERATION, MODEL_OPERATION_CREATE);
     return VIEW_DEMO;
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/form/{demoId}", method = RequestMethod.GET)
+  @RequestMapping(value = ROOT_URL + "/{demoId}/form", method = RequestMethod.GET)
   public String showDemoEditForm(@PathVariable("demoId") final long demoId,
                                  ModelMap modelMap)
   {
-    modelMap.put(MODEL_DEMO, demoRepository.getOne(demoId));
-    modelMap.put(MODEL_OPERATION, "Edit");
+    modelMap.put(MODEL_DEMO, demoDrawService.getOne(demoId));
+    modelMap.put(MODEL_OPERATION, MODEL_OPERATION_EDIT);
     return VIEW_DEMO;
   }
 
@@ -82,23 +91,12 @@ public class DemoController
   {
     if (result.hasErrors()) {
       modelMap.put(MODEL_DEMO, demo);
-      modelMap.put(MODEL_OPERATION, Objects.isNull(demo.getId()) ? "Create" : "Edit");
+      modelMap.put(MODEL_OPERATION, ControllerConstants.modelOperation(demo));
       return VIEW_DEMO;
     }
     else {
-      Demo demoToBeSaved = demo;
-
-      if (Objects.nonNull(demo.getId()) && demoRepository.existsById(demo.getId())) {
-        //update
-        demoToBeSaved = demoRepository.getOne(demo.getId());
-        demoToBeSaved.setTitle(demo.getTitle());
-        demoToBeSaved.setPlannedDate(demo.getPlannedDate());
-        demoToBeSaved.setSummary(demo.getSummary());
-        demoToBeSaved.setLink(demo.getLink());
-      }
-
-      //save and go to the list of members
-      demoRepository.save(demoToBeSaved);
+      //submit and go to the list of members
+      demoDrawService.submit(demo);
       return "redirect:" + ROOT_URL;
     }
   }
@@ -109,6 +107,93 @@ public class DemoController
   public void deleteDemo(@PathVariable("demoId") final long demoId)
   {
     //TODO: handle EmptyResultDataAccessException??
-    demoRepository.deleteById(demoId);
+    demoDrawService.deleteById(demoId);
+  }
+
+
+  @RequestMapping(value = ROOT_URL + "/{demoId}/formtask", method = RequestMethod.GET)
+  String showDemo(ModelMap modal,
+                  @PathVariable("demoId") final long demoId)
+  {
+    modal.addAttribute("demo", demoDrawService.getOne(demoId));
+    return "demoWithTasks";
+  }
+
+
+  @RequestMapping(value = ROOT_URL + "/{demoId}/tasks/form", method = RequestMethod.GET)
+  public String showDemoTaskCreateForm(@PathVariable("demoId") final long demoId,
+                                       ModelMap modelMap)
+  {
+    withTaskModel(modelMap, demoDrawService.getOne(demoId), new DemoTask(), MODEL_OPERATION_CREATE);
+    return VIEW_DEMO_TASK;
+  }
+
+
+  @RequestMapping(value = ROOT_URL + "/{demoId}/tasks/{taskId}/form", method = RequestMethod.GET)
+  public String showDemoTaskEditForm(@PathVariable("demoId") final long demoId,
+                                     @PathVariable("taskId") final long taskId,
+                                     ModelMap modelMap)
+  {
+    Demo demo = demoDrawService.getOne(demoId);
+    withTaskModel(
+        modelMap,
+        demoDrawService.getOne(demoId),
+        demo.getTaskById(taskId),
+        MODEL_OPERATION_EDIT);
+    return VIEW_DEMO_TASK;
+  }
+
+
+  @RequestMapping(value = ROOT_URL + "/{demoId}/tasks", method = RequestMethod.POST)
+  public String submitDemoTask(@PathVariable("demoId") final long demoId,
+                               @Valid @ModelAttribute(MODEL_DEMO_TASK) DemoTask demoTask,
+                               BindingResult result,
+                               ModelMap modelMap)
+  {
+    Demo demo = demoDrawService.getOne(demoId);
+
+    if (result.hasErrors()) {
+      withTaskModel(modelMap, demo, demoTask, ControllerConstants.modelOperation(demoTask));
+      return VIEW_DEMO_TASK;
+    }
+    else {
+      demoDrawService.submitTask(demo, demoTask);
+      return "redirect:" + ROOT_URL + "/" + demoId + "/formtask/";
+    }
+  }
+
+
+  @RequestMapping(value = ROOT_URL + "/{demoId}/tasks/{taskId}", method = RequestMethod.DELETE)
+  @ResponseStatus(value = HttpStatus.OK)
+  public void deleteDemoTack(@PathVariable("demoId") final long demoId,
+                             @PathVariable("taskId") final long taskId)
+  {
+    //TODO: handle EmptyResultDataAccessException??
+    demoDrawService.deleteTask(demoDrawService.getOne(demoId), taskId);
+  }
+
+
+  @InitBinder
+  public void initBinder(HttpServletRequest requst, ServletRequestDataBinder binder)
+  {
+    binder.registerCustomEditor(DrawStatus.class, new DrawStatusPropertyEditor());
+    binder.registerCustomEditor(TeamMember.class,
+        new TeamMemberPropertyEditor(teamMemberRepository.findAll(), DEFAULT_FORMATTER)
+    );
+  }
+
+
+  private void withTaskModel(ModelMap modelMap, Demo demo, DemoTask task, String operation)
+  {
+    modelMap.put(MODEL_DEMO, demo);
+    modelMap.put(MODEL_DEMO_TASK, task);
+    modelMap.put(MODEL_MEMBERS,
+        teamMemberRepository.findActiveOnly()
+            .stream()
+            .map(DEFAULT_FORMATTER)
+            .sorted()
+            .collect(Collectors.toList())
+    );
+    modelMap.put(MODEL_OPERATION, operation);
   }
 }

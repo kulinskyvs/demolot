@@ -1,4 +1,4 @@
-package com.kyriba.tool.demolot.service;
+package com.kyriba.tool.demolot.repository;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
@@ -6,7 +6,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.kyriba.tool.demolot.DemolotApplication;
 import com.kyriba.tool.demolot.domain.TeamMember;
-import com.kyriba.tool.demolot.repository.TeamMemberRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
@@ -21,7 +21,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 
 import java.util.List;
 
-import static com.kyriba.tool.demolot.service.TeamMemberRepositoryIT.DATASET;
+import static com.kyriba.tool.demolot.repository.TeamMemberRepositoryIT.DATASET;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -36,6 +36,7 @@ import static org.junit.Assert.assertThat;
 @DirtiesContext
 @SpringBootTest(classes = DemolotApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource(locations="classpath:test.properties")
 public class TeamMemberRepositoryIT
 {
 

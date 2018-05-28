@@ -11,6 +11,7 @@ package com.kyriba.tool.demolot.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -29,15 +30,21 @@ import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 public class DemoTask implements HasLongId
 {
 
-  public static final int KEY_MAX_LENGTH = 10;
+  public static final int KEY_MAX_LENGTH = 20;
   public static final int TITLE_MAX_LENGTH = 100;
+  public static final int LINK_MAX_LENGTH = 200;
+
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @ManyToOne
+  @JoinColumn(name = "DEMO_ID", nullable = false)
+  private Demo demo;
 
-  @Column(name = "KEY", nullable = false )
+
+  @Column(name = "KEY", nullable = false)
   @NotBlank
   @Length(min = 1, max = KEY_MAX_LENGTH)
   private String key;
@@ -49,15 +56,16 @@ public class DemoTask implements HasLongId
   private String title;
 
 
-  @ManyToOne
-  @JoinColumn(name = "DEMO_ID", nullable = false)
-  private Demo demo;
-
-
   @OneToOne
   @JoinColumn(name = "OWNER_ID", nullable = false)
   @NotNull
   private TeamMember owner;
+
+
+  @Column(name = "LINK")
+  @URL
+  @Length(max = LINK_MAX_LENGTH)
+  private String link;
 
 
   public Long getId()
@@ -117,6 +125,18 @@ public class DemoTask implements HasLongId
   public void setOwner(TeamMember owner)
   {
     this.owner = owner;
+  }
+
+
+  public String getLink()
+  {
+    return link;
+  }
+
+
+  public void setLink(String link)
+  {
+    this.link = link;
   }
 
 

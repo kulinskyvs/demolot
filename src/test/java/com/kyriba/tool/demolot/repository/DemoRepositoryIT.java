@@ -6,7 +6,7 @@
  * 5/25/2018     M-VKU   Initial                                                  *
  * Copyright 2000 - 2018 Kyriba Corp. All Rights Reserved.                   *
  ********************************************************************************/
-package com.kyriba.tool.demolot.service;
+package com.kyriba.tool.demolot.repository;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
@@ -15,21 +15,19 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.kyriba.tool.demolot.DemolotApplication;
 import com.kyriba.tool.demolot.domain.Demo;
 import com.kyriba.tool.demolot.domain.DemoTask;
-import com.kyriba.tool.demolot.repository.DemoRepository;
-import com.kyriba.tool.demolot.repository.DemoTaskRepository;
-import com.kyriba.tool.demolot.repository.TeamMemberRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import static com.kyriba.tool.demolot.service.DemoRepositoryIT.DATASET;
+import static com.kyriba.tool.demolot.repository.DemoRepositoryIT.DATASET;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -48,6 +46,7 @@ import static org.junit.Assert.assertThat;
 @DirtiesContext
 @SpringBootTest(classes = DemolotApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@TestPropertySource(locations="classpath:test.properties")
 public class DemoRepositoryIT
 {
   static final String DATASET = "classpath:datasets/domain.xml";
@@ -114,4 +113,5 @@ public class DemoRepositoryIT
     assertThat(savedTask.getDemo(), equalTo(savedDemo));
     assertThat(savedTask.getOwner(), equalTo(teamMemberRepository.getOne(1L)));
   }
+
 }
