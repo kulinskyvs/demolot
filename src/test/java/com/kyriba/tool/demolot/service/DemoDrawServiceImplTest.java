@@ -381,4 +381,18 @@ public class DemoDrawServiceImplTest
     assertThat(taskFromUpdatedDemo.getOwner(), equalTo(memberRepository.getOne(2L)));
     assertThat(taskFromUpdatedDemo.getDemo(), equalTo(updatedDemo));
   }
+
+
+  @Test
+  public void startDrawMustUpdateOnlyInPreparationDraws()
+  {
+    service.startDraw(1L);
+    assertThat(demoRepository.getOne(1L).getDrawStatus(), equalTo(DrawStatus.IN_PROGRESS));
+
+    service.startDraw(2L);
+    assertThat(demoRepository.getOne(2L).getDrawStatus(), equalTo(DrawStatus.IN_PROGRESS));
+
+    service.startDraw(3L);
+    assertThat(demoRepository.getOne(3L).getDrawStatus(), equalTo(DrawStatus.FINISHED));
+  }
 }

@@ -6,12 +6,10 @@
  * 5/24/2018     M-VKU   Initial                                                  *
  * Copyright 2000 - 2018 Kyriba Corp. All Rights Reserved.                   *
  ********************************************************************************/
-package com.kyriba.tool.demolot.controller;
+package com.kyriba.tool.demolot.web.controller;
 
 import com.kyriba.tool.demolot.domain.Demo;
 import com.kyriba.tool.demolot.domain.DemoTask;
-import com.kyriba.tool.demolot.domain.DrawStatus;
-import com.kyriba.tool.demolot.domain.TeamMember;
 import com.kyriba.tool.demolot.repository.TeamMemberRepository;
 import com.kyriba.tool.demolot.service.DemoDrawService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +17,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
-import static com.kyriba.tool.demolot.controller.ControllerConstants.*;
-import static com.kyriba.tool.demolot.controller.TeamMemberPropertyEditor.DEFAULT_FORMATTER;
+import static com.kyriba.tool.demolot.domain.editors.TeamMemberPropertyEditor.DEFAULT_FORMATTER;
+import static com.kyriba.tool.demolot.web.controller.ControllerConstants.*;
 
 
 /**
@@ -38,12 +34,7 @@ import static com.kyriba.tool.demolot.controller.TeamMemberPropertyEditor.DEFAUL
 @Controller
 public class DemoController
 {
-  private static final String ROOT_URL = "/demos";
-  private static final String MODEL_DEMO = "demo";
   private static final String VIEW_DEMO = "demo";
-
-  private static final String MODEL_MEMBERS = "members";
-  private static final String MODEL_DEMO_TASK = "task";
   private static final String VIEW_DEMO_TASK = "task";
 
   @Autowired
@@ -53,7 +44,7 @@ public class DemoController
   private TeamMemberRepository teamMemberRepository;
 
 
-  @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
+  @RequestMapping(value = URL_DEMOS_ROOT, method = RequestMethod.GET)
   String showAllDemos(ModelMap modal)
   {
     modal.addAttribute("demos", demoDrawService.findAll());
@@ -62,7 +53,7 @@ public class DemoController
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/form", method = RequestMethod.GET)
+  @RequestMapping(value = URL_DEMOS_ROOT + "/form", method = RequestMethod.GET)
   public String showDemoCreateForm(ModelMap modelMap)
   {
     Demo newDemo = new Demo();
@@ -74,7 +65,7 @@ public class DemoController
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/{demoId}/form", method = RequestMethod.GET)
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/form", method = RequestMethod.GET)
   public String showDemoEditForm(@PathVariable("demoId") final long demoId,
                                  ModelMap modelMap)
   {
@@ -84,7 +75,7 @@ public class DemoController
   }
 
 
-  @RequestMapping(value = ROOT_URL, method = RequestMethod.POST)
+  @RequestMapping(value = URL_DEMOS_ROOT, method = RequestMethod.POST)
   public String submitDemo(@Valid @ModelAttribute(MODEL_DEMO) Demo demo,
                            BindingResult result,
                            ModelMap modelMap)
@@ -97,12 +88,12 @@ public class DemoController
     else {
       //submit and go to the list of members
       demoDrawService.submit(demo);
-      return "redirect:" + ROOT_URL;
+      return "redirect:" + URL_DEMOS_ROOT;
     }
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/{demoId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}", method = RequestMethod.DELETE)
   @ResponseStatus(value = HttpStatus.OK)
   public void deleteDemo(@PathVariable("demoId") final long demoId)
   {
@@ -111,7 +102,7 @@ public class DemoController
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/{demoId}/formtask", method = RequestMethod.GET)
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/formtask", method = RequestMethod.GET)
   String showDemo(ModelMap modal,
                   @PathVariable("demoId") final long demoId)
   {
@@ -120,7 +111,7 @@ public class DemoController
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/{demoId}/tasks/form", method = RequestMethod.GET)
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/form", method = RequestMethod.GET)
   public String showDemoTaskCreateForm(@PathVariable("demoId") final long demoId,
                                        ModelMap modelMap)
   {
@@ -129,7 +120,7 @@ public class DemoController
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/{demoId}/tasks/{taskId}/form", method = RequestMethod.GET)
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/{taskId}/form", method = RequestMethod.GET)
   public String showDemoTaskEditForm(@PathVariable("demoId") final long demoId,
                                      @PathVariable("taskId") final long taskId,
                                      ModelMap modelMap)
@@ -144,7 +135,7 @@ public class DemoController
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/{demoId}/tasks", method = RequestMethod.POST)
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks", method = RequestMethod.POST)
   public String submitDemoTask(@PathVariable("demoId") final long demoId,
                                @Valid @ModelAttribute(MODEL_DEMO_TASK) DemoTask demoTask,
                                BindingResult result,
@@ -158,28 +149,18 @@ public class DemoController
     }
     else {
       demoDrawService.submitTask(demo, demoTask);
-      return "redirect:" + ROOT_URL + "/" + demoId + "/formtask/";
+      return "redirect:" + URL_DEMOS_ROOT + "/" + demoId + "/formtask/";
     }
   }
 
 
-  @RequestMapping(value = ROOT_URL + "/{demoId}/tasks/{taskId}", method = RequestMethod.DELETE)
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/{taskId}", method = RequestMethod.DELETE)
   @ResponseStatus(value = HttpStatus.OK)
   public void deleteDemoTack(@PathVariable("demoId") final long demoId,
                              @PathVariable("taskId") final long taskId)
   {
     //TODO: handle EmptyResultDataAccessException??
     demoDrawService.deleteTask(demoDrawService.getOne(demoId), taskId);
-  }
-
-
-  @InitBinder
-  public void initBinder(HttpServletRequest requst, ServletRequestDataBinder binder)
-  {
-    binder.registerCustomEditor(DrawStatus.class, new DrawStatusPropertyEditor());
-    binder.registerCustomEditor(TeamMember.class,
-        new TeamMemberPropertyEditor(teamMemberRepository.findAll(), DEFAULT_FORMATTER)
-    );
   }
 
 

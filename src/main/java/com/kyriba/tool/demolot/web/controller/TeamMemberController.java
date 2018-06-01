@@ -6,7 +6,7 @@
  * 5/24/2018     M-VKU   Initial                                                  *
  * Copyright 2000 - 2018 Kyriba Corp. All Rights Reserved.                   *
  ********************************************************************************/
-package com.kyriba.tool.demolot.controller;
+package com.kyriba.tool.demolot.web.controller;
 
 import com.kyriba.tool.demolot.domain.TeamMember;
 import com.kyriba.tool.demolot.repository.TeamMemberRepository;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Optional;
 
-import static com.kyriba.tool.demolot.controller.ControllerConstants.*;
+import static com.kyriba.tool.demolot.web.controller.ControllerConstants.*;
 import static org.springframework.data.domain.Sort.Order.asc;
 
 

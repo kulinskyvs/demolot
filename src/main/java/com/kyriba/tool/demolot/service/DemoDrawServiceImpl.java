@@ -129,6 +129,18 @@ class DemoDrawServiceImpl implements DemoDrawService
   }
 
 
+  @Override
+  public Demo startDraw(long id)
+  {
+    Demo demo = getOne(id);
+    if (demo.getDrawStatus().equals(DrawStatus.PREPARATION)) {
+      demo.setDrawStatus(DrawStatus.IN_PROGRESS);
+      demo = repository.save(demo);
+    }
+    return demo;
+  }
+
+
   private Demo validateSubmission(Demo submissionCandidate, Consumer<Demo> submitter)
   {
 

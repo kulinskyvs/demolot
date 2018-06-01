@@ -6,7 +6,7 @@
  * 5/28/2018     M-VKU   Initial                                                  *
  * Copyright 2000 - 2018 Kyriba Corp. All Rights Reserved.                   *
  ********************************************************************************/
-package com.kyriba.tool.demolot.controller;
+package com.kyriba.tool.demolot.web.controller;
 
 import com.kyriba.tool.demolot.domain.HasLongId;
 
@@ -20,8 +20,14 @@ import java.util.Objects;
 public final class ControllerConstants
 {
   public static final String MODEL_OPERATION = "operation";
-  public static String MODEL_OPERATION_CREATE = "Create";
-  public static String MODEL_OPERATION_EDIT = "Edit";
+  public static final String MODEL_DEMO = "demo";
+  public static final String MODEL_MEMBERS = "members";
+  public static final String MODEL_DEMO_TASK = "task";
+
+  public static final String MODEL_OPERATION_CREATE = "Create";
+  public static final String MODEL_OPERATION_EDIT = "Edit";
+
+  public static final String URL_DEMOS_ROOT = "/demos";
 
 
   private ControllerConstants()

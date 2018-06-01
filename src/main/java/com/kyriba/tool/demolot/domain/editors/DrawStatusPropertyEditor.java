@@ -6,7 +6,7 @@
  * 5/28/2018     M-VKU   Initial                                                  *
  * Copyright 2000 - 2018 Kyriba Corp. All Rights Reserved.                   *
  ********************************************************************************/
-package com.kyriba.tool.demolot.controller;
+package com.kyriba.tool.demolot.domain.editors;
 
 import com.kyriba.tool.demolot.domain.DrawStatus;
 

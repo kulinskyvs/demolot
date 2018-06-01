@@ -14,7 +14,7 @@ package com.kyriba.tool.demolot.domain;
 public enum DrawStatus
 {
   PREPARATION("Preparation"),
-  IN_PROGRESS("In_progress"),
+  IN_PROGRESS("In progress"),
   FINISHED("Finished");
 
   private String description;

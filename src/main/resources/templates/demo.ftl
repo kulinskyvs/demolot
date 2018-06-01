@@ -4,8 +4,7 @@
 
 <div class="container mt-3">
     <div class="py-5 text-center">
-        <h2>${operation} Spring Demo Draw</h2>
-        <p class="lead">Fill the form below to add or update a Spring demo draw</p>
+        <h2>Draw of ${demo.title}</h2>
     </div>
 
     <#if validationError??>
@@ -61,13 +60,23 @@
         <hr class="mb-4">
         <@spring.formHiddenInput "demo.id"/>
         <div class="row">
-          <div class="col-md-8 "> &nbsp;</div>
-          <div class="col-md-2 text-right">
-            <input type="submit" value="Save" class="btn btn-success btn-lg btn-block">
-          </div>
-          <div class="col-md-2 text-right">
-            <a role="button" class="btn btn-warning btn-lg btn-block" href="/demos">Cancel</a>
-          </div>
+
+          <#if demo.drawStatus.name() == "PREPARATION">
+              <div class="col-md-8 "> &nbsp;</div>
+              <div class="col-md-2 text-right">
+                <input type="submit" value="Save" class="btn btn-success btn-lg btn-block">
+              </div>
+              <div class="col-md-2 text-right">
+                <a role="button" class="btn btn-warning btn-lg btn-block" href="/demos">Cancel</a>
+              </div>
+          <#else>
+              <div class="col-md-10"> &nbsp;</div>
+              <div class="col-md-2 text-right">
+                <a role="button" class="btn btn-warning btn-lg btn-block" href="/demos">Close</a>
+              </div>
+          </#if>
+
+
         </div>
     </form>
 </div>

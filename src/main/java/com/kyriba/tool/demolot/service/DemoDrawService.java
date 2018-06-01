@@ -43,4 +43,8 @@ public interface DemoDrawService
 
   @Transactional
   void deleteById(long id);
+
+
+  @Transactional
+  Demo startDraw(long id);
 }

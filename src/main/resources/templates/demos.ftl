@@ -43,16 +43,17 @@
                             Actions..
                           </button>
                           <div class="dropdown-menu">
+                               <a class="dropdown-item" href="/demos/${demo.id}/form">Edit</a>
+                               <a class="dropdown-item"  href="/demos/${demo.id}/formtask">Define tasks</a>
+                               <div class="dropdown-divider"></div>
+
                               <#if demo.drawStatus.name() == "PREPARATION">
-                                 <a class="dropdown-item" href="/demos/${demo.id}/form">Edit</a>
-                                 <a class="dropdown-item"  href="/demos/${demo.id}/formtask">Define tasks</a>
-                                 <div class="dropdown-divider"></div>
                                  <button class="dropdown-item" type="button" onclick="deleteDemo(${demo.id})">Delete</button>
                                  <div class="dropdown-divider"></div>
-                              </#if>
-                              <#if demo.drawStatus.name() != "FINISHED">
-                                 <a class="dropdown-item" href="#">Play</a>
-                              </#if>
+                                 <button class="dropdown-item" type="button" onclick="startDemoDraw(${demo.id})">Start draw</button>
+                               <#else>
+                                  <a class="dropdown-item"  href="/demos/${demo.id}/draw">Play</a>
+                               </#if>
                           </div>
                         </div>
                   </td>
@@ -73,6 +74,25 @@
         "/demos/"+demoId,
         '/demos'
       );
+    }
+
+    function startDemoDraw(demoId) {
+        var drawUrl = '/demos/'+demoId+'/draw';
+        showConfirmation(
+           "Confirm the delete action",
+           'Do you really want to start the draw of the selected Demo (this will block an ability to update the demo and its tasks)?',
+           "Start draw and block demo updates",
+           function() {
+               $.ajax({
+                    url: drawUrl,
+                    type: 'POST',
+                    success: function(result) {
+                         window.location.href = drawUrl;
+                    },
+                    error: showAjaxError
+                });
+           }
+        );
     }
 </script>
 
