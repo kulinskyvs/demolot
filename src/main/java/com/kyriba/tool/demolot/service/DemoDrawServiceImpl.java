@@ -12,13 +12,17 @@ import com.kyriba.tool.demolot.domain.Demo;
 import com.kyriba.tool.demolot.domain.DemoTask;
 import com.kyriba.tool.demolot.domain.DrawStatus;
 import com.kyriba.tool.demolot.repository.DemoRepository;
+import com.kyriba.tool.demolot.repository.TeamMemberRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static org.springframework.data.domain.Sort.Order.desc;
 
@@ -32,11 +36,14 @@ class DemoDrawServiceImpl implements DemoDrawService
 {
 
   private final DemoRepository repository;
+  private final TeamMemberRepository teamMemberRepository;
 
 
-  public DemoDrawServiceImpl(DemoRepository repository)
+  public DemoDrawServiceImpl(DemoRepository repository,
+                             TeamMemberRepository teamMemberRepository)
   {
     this.repository = repository;
+    this.teamMemberRepository = teamMemberRepository;
   }
 
 
@@ -141,6 +148,63 @@ class DemoDrawServiceImpl implements DemoDrawService
   }
 
 
+  @Override
+  public Demo drawTasks(long id)
+  {
+    Demo demo = getOne(id);
+    return drawTasks(demo,
+        demo.getTasks().stream().filter(task -> !task.hasWinner()).map(DemoTask::getId).collect(Collectors.toList())
+    );
+  }
+
+
+  @Override
+  public Demo drawTask(long demoId, long taskId)
+  {
+    return drawTasks(getOne(demoId), Arrays.asList(taskId));
+  }
+
+
+  @Override
+  public Demo resetDraw(long demoId)
+  {
+    Demo demo = getOne(demoId);
+    for (DemoTask task : demo.getTasks()) {
+      task.setWinner(null);
+      task.setDrawDateTime(null);
+    }
+    demo.setDrawStatus(DrawStatus.IN_PROGRESS);
+    return repository.save(demo);
+  }
+
+
+  private Demo drawTasks(Demo demo, List<Long> tasksId)
+  {
+    LocalDateTime drawTimestamp = LocalDateTime.now();
+    DrawWinnerFinder drawWinnerFinder = new DrawWinnerFinder(demo, teamMemberRepository.findActiveOnly());
+
+    if (DrawStatus.IN_PROGRESS == demo.getDrawStatus()) {
+
+      //find the winner for each task
+      demo.getTasks()
+          .stream()
+          .filter(task -> tasksId.contains(task.getId()))
+          .forEach(task -> {
+            task.setWinner(drawWinnerFinder.find(task));
+            task.setDrawDateTime(drawTimestamp);
+          });
+
+      //reflect the draw status
+      recalculateDrawStatus(demo);
+
+      return repository.save(demo);
+    }
+    else {
+      return demo;
+    }
+  }
+
+
   private Demo validateSubmission(Demo submissionCandidate, Consumer<Demo> submitter)
   {
 
@@ -157,5 +221,14 @@ class DemoDrawServiceImpl implements DemoDrawService
     else {
       throw new IllegalStateException("Unable to find demo with id = " + submissionCandidate.getId());
     }
+  }
+
+
+  private static void recalculateDrawStatus(Demo demo)
+  {
+    demo.setDrawStatus(
+        demo.getTasks().stream().allMatch(DemoTask::hasWinner) ?
+            DrawStatus.FINISHED :
+            DrawStatus.IN_PROGRESS);
   }
 }

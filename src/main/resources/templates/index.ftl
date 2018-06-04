@@ -27,7 +27,7 @@
         <p> Simply prepare the list of tasks to be shown on next Spring demo and start the Draw > definitely, you'll have a lot of fun...
         The winners will be happy to receive a kindly reminder with the list of tasks they have won - no more excuses that
         something is missed or forgotten. </p>
-        <p><a class="btn btn-secondary" href="/demos" role="button">Start a draw &raquo;</a></p>
+        <p><a class="btn btn-primary" href="/demos" role="button">Start a draw &raquo;</a></p>
       </div>
     </div>
 

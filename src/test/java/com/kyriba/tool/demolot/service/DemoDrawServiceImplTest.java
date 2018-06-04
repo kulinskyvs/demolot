@@ -86,7 +86,7 @@ public class DemoDrawServiceImplTest
   @Before
   public void setUp() throws Exception
   {
-    service = new DemoDrawServiceImpl(demoRepository);
+    service = new DemoDrawServiceImpl(demoRepository, memberRepository);
   }
 
 

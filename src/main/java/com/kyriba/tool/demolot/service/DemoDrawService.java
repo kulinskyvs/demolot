@@ -47,4 +47,14 @@ public interface DemoDrawService
 
   @Transactional
   Demo startDraw(long id);
+
+  @Transactional
+  Demo drawTasks(long id);
+
+
+  @Transactional
+  Demo drawTask(long demoId, long taskId);
+
+  @Transactional
+  Demo resetDraw(long demoId);
 }

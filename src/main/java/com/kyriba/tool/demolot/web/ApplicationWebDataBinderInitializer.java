@@ -37,7 +37,8 @@ public class ApplicationWebDataBinderInitializer
   {
     binder.registerCustomEditor(DrawStatus.class, new DrawStatusPropertyEditor());
     binder.registerCustomEditor(TeamMember.class,
-        new TeamMemberPropertyEditor(teamMemberRepository.findAll(), DEFAULT_FORMATTER)
+        new TeamMemberPropertyEditor(teamMemberRepository::findAll, DEFAULT_FORMATTER)
     );
   }
+
 }

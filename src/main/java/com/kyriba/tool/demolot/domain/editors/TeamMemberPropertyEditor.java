@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 /**
@@ -29,19 +30,19 @@ public class TeamMemberPropertyEditor extends PropertyEditorSupport
       .orElse("");
 
   private final Function<TeamMember, String> formatter;
-  private final List<TeamMember> members;
+  private final Supplier<List<TeamMember>> membersSupplier;
 
 
-  public TeamMemberPropertyEditor(List<TeamMember> members)
+  public TeamMemberPropertyEditor(Supplier<List<TeamMember>> membersSupplier)
   {
-    this(members, DEFAULT_FORMATTER);
+    this(membersSupplier, DEFAULT_FORMATTER);
   }
 
 
-  public TeamMemberPropertyEditor(List<TeamMember> members,
+  public TeamMemberPropertyEditor(Supplier<List<TeamMember>> membersSupplier,
                                   Function<TeamMember, String> formatter)
   {
-    this.members = members;
+    this.membersSupplier = membersSupplier;
     this.formatter = formatter;
   }
 
@@ -56,7 +57,9 @@ public class TeamMemberPropertyEditor extends PropertyEditorSupport
   @Override
   public void setAsText(String text)
   {
-    setValue(members.stream()
+    setValue(membersSupplier
+        .get()
+        .stream()
         .filter(member -> Objects.equals(text, formatter.apply(member)))
         .findFirst()
         .orElse(null)

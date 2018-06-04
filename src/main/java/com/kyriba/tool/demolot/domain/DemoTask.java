@@ -12,10 +12,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
@@ -66,6 +68,16 @@ public class DemoTask implements HasLongId
   @URL
   @Length(max = LINK_MAX_LENGTH)
   private String link;
+
+
+  @Column(name = "DRAW_TIMESTAMP")
+  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime drawDateTime;
+
+
+  @OneToOne
+  @JoinColumn(name = "WINNER_ID")
+  private TeamMember winner;
 
 
   public Long getId()
@@ -140,6 +152,30 @@ public class DemoTask implements HasLongId
   }
 
 
+  public LocalDateTime getDrawDateTime()
+  {
+    return drawDateTime;
+  }
+
+
+  public void setDrawDateTime(LocalDateTime drawDateTime)
+  {
+    this.drawDateTime = drawDateTime;
+  }
+
+
+  public TeamMember getWinner()
+  {
+    return winner;
+  }
+
+
+  public void setWinner(TeamMember winner)
+  {
+    this.winner = winner;
+  }
+
+
   @Override
   public boolean equals(Object o)
   {
@@ -168,5 +204,16 @@ public class DemoTask implements HasLongId
         .append("key", key)
         .append("title", title)
         .toString();
+  }
+
+
+  /**
+   * Returns a boolean flag that denotes whether a winner was defined for the task or not
+   *
+   * @return boolean value that denotes whether a winner was defined for the task or not
+   */
+  public boolean hasWinner()
+  {
+    return Objects.nonNull(winner);
   }
 }

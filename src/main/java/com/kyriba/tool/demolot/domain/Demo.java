@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -205,5 +206,4 @@ public class Demo implements HasLongId
             "Unable to find a task with id " + taskId + " into a demo with id [" + getId() + "]")
         );
   }
-
 }

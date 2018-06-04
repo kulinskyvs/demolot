@@ -156,7 +156,7 @@ public class DemoController
 
   @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/{taskId}", method = RequestMethod.DELETE)
   @ResponseStatus(value = HttpStatus.OK)
-  public void deleteDemoTack(@PathVariable("demoId") final long demoId,
+  public void deleteDemoTask(@PathVariable("demoId") final long demoId,
                              @PathVariable("taskId") final long taskId)
   {
     //TODO: handle EmptyResultDataAccessException??

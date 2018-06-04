@@ -8,16 +8,15 @@
  ********************************************************************************/
 package com.kyriba.tool.demolot.web.controller;
 
+import com.kyriba.tool.demolot.domain.Demo;
 import com.kyriba.tool.demolot.repository.TeamMemberRepository;
 import com.kyriba.tool.demolot.service.DemoDrawService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static com.kyriba.tool.demolot.web.controller.ControllerConstants.MODEL_DEMO;
 import static com.kyriba.tool.demolot.web.controller.ControllerConstants.URL_DEMOS_ROOT;
@@ -41,11 +40,10 @@ public class DemoDrawController
 
 
   @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw", method = RequestMethod.POST)
-  @ResponseStatus(value = HttpStatus.OK)
-  public void startDemoDraw(@PathVariable("demoId") final long demoId,
-                            ModelMap modelMap)
+  public String startDemoDraw(@PathVariable("demoId") final long demoId,
+                              ModelMap modelMap)
   {
-    demoDrawService.startDraw(demoId);
+    return demoDrawView(demoDrawService.startDraw(demoId), modelMap);
   }
 
 
@@ -53,8 +51,47 @@ public class DemoDrawController
   public String showDemoDrawForm(@PathVariable("demoId") final long demoId,
                                  ModelMap modelMap)
   {
-    modelMap.put(MODEL_DEMO, demoDrawService.getOne(demoId));
-    return VIEW_DEMO_DRAW;
+    return demoDrawView(demoDrawService.getOne(demoId), modelMap);
   }
 
+
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks", method = RequestMethod.POST)
+  public String drawAllTasks(@PathVariable("demoId") final long demoId,
+                             ModelMap modelMap)
+  {
+    return demoDrawView(demoDrawService.drawTasks(demoId), modelMap);
+  }
+
+
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks/{taskId}", method = RequestMethod.POST)
+  public String drawTask(@PathVariable("demoId") final long demoId,
+                         @PathVariable("taskId") final long taskId,
+                         ModelMap modelMap)
+  {
+    return demoDrawView(demoDrawService.drawTask(demoId, taskId), modelMap);
+  }
+
+
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks", method = RequestMethod.DELETE)
+  public String resetDraw(@PathVariable("demoId") final long demoId,
+                          ModelMap modelMap)
+  {
+    return demoDrawView(demoDrawService.resetDraw(demoId), modelMap);
+  }
+
+
+  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/notifications", method = RequestMethod.POST)
+  public String sendNotification(@PathVariable("demoId") final long demoId,
+                                 ModelMap modelMap)
+  {
+    //TODO:!!!
+    return demoDrawView(demoDrawService.getOne(demoId), modelMap);
+  }
+
+
+  private static String demoDrawView(final Demo demo, ModelMap modelMap)
+  {
+    modelMap.put(MODEL_DEMO, demo);
+    return VIEW_DEMO_DRAW;
+  }
 }

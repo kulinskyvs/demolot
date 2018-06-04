@@ -52,7 +52,7 @@
                   <td style="width:25%;text-align:right;white-space:nowrap">
                       <#if demo.drawStatus.name() == "PREPARATION">
                         <div class="btn-group">
-                          <button type="button" class="btn btn-secomdary dropdown-toggle" data-toggle="dropdown"
+                          <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
                                   aria-haspopup="true" aria-expanded="false">
                             Actions..
                           </button>
