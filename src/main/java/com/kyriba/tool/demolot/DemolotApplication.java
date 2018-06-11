@@ -24,5 +24,4 @@ public class DemolotApplication
   {
     return new FixedLocaleResolver(Locale.ENGLISH);
   }
-
 }

@@ -9,8 +9,10 @@
 package com.kyriba.tool.demolot.web.controller;
 
 import com.kyriba.tool.demolot.domain.Demo;
+import com.kyriba.tool.demolot.domain.DrawStatus;
 import com.kyriba.tool.demolot.repository.TeamMemberRepository;
 import com.kyriba.tool.demolot.service.DemoDrawService;
+import com.kyriba.tool.demolot.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -36,6 +38,9 @@ public class DemoDrawController
   private DemoDrawService demoDrawService;
 
   @Autowired
+  private EmailService emailService;
+
+  @Autowired
   private TeamMemberRepository teamMemberRepository;
 
 
@@ -59,7 +64,10 @@ public class DemoDrawController
   public String drawAllTasks(@PathVariable("demoId") final long demoId,
                              ModelMap modelMap)
   {
-    return demoDrawView(demoDrawService.drawTasks(demoId), modelMap);
+    return demoDrawView(
+        withNotificationSent(demoDrawService.drawTasks(demoId)),
+        modelMap
+    );
   }
 
 
@@ -68,7 +76,10 @@ public class DemoDrawController
                          @PathVariable("taskId") final long taskId,
                          ModelMap modelMap)
   {
-    return demoDrawView(demoDrawService.drawTask(demoId, taskId), modelMap);
+    return demoDrawView(
+        withNotificationSent(demoDrawService.drawTask(demoId, taskId)),
+        modelMap
+    );
   }
 
 
@@ -84,8 +95,9 @@ public class DemoDrawController
   public String sendNotification(@PathVariable("demoId") final long demoId,
                                  ModelMap modelMap)
   {
-    //TODO:!!!
-    return demoDrawView(demoDrawService.getOne(demoId), modelMap);
+    return demoDrawView(
+        withNotificationSent(demoDrawService.getOne(demoId)),
+        modelMap);
   }
 
 
@@ -93,5 +105,14 @@ public class DemoDrawController
   {
     modelMap.put(MODEL_DEMO, demo);
     return VIEW_DEMO_DRAW;
+  }
+
+
+  private Demo withNotificationSent(Demo demo)
+  {
+    if (DrawStatus.FINISHED == demo.getDrawStatus()) {
+      emailService.notifyDemoResults(demo);
+    }
+    return demo;
   }
 }
