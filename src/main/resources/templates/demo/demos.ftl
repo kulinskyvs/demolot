@@ -4,7 +4,7 @@
 
     <div class="row">
       <div class="col-md-6 text-left">
-         <h2>Spring demo draws</h2>
+         <h2>Sprint demo draws</h2>
       </div>
       <div class="col-md-6 text-right">
          <a role="button" class="btn btn-primary" href="/demos/form">Create</a>
@@ -73,7 +73,7 @@
 <script type="text/javascript">
     function deleteDemo(demoId) {
       doDeleteAndReload(
-        'Do you really want to delete the selected Spring demo draw (all the tasks and results will be removed as well)?',
+        'Do you really want to delete the selected Sprint demo draw (all the tasks and results will be removed as well)?',
         "/demos/"+demoId,
         '/demos'
       );

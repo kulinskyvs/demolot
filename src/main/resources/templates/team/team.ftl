@@ -26,7 +26,7 @@
             </thead>
             <tbody>
               <#list members as member>
-                <tr>
+                <tr ${member.active?string('', 'class="text-danger"')}>
                   <td>${member.id}</td>
                   <td>${member.name}</td>
                   <td>${member.surname}</td>

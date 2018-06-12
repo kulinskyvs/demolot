@@ -4,8 +4,8 @@
 
 <div class="container mt-3">
      <div class="py-3 text-center">
-        <h2>${operation} Spring Demo Draw</h2>
-        <p class="lead">Fill the form below to add or update a Spring demo draw</p>
+        <h2>${operation} Sprint Demo Draw</h2>
+        <p class="lead">Fill the form below to add or update a Sprint demo draw</p>
      </div>
 
     <#if validationError??>
