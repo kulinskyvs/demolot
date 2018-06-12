@@ -22,7 +22,8 @@ public interface EmailService
    * Send email notifications about the results of the given demo
    *
    * @param demo demo which results should be notified
+   * @param emailTemplate email template path
    */
-  void notifyDemoResults(Demo demo);
+  void notifyDemoResults(Demo demo, String emailTemplate);
 
 }

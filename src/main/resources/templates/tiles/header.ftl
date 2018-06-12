@@ -14,20 +14,31 @@
     </head>
     <body>
 
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-          <a class="navbar-brand" href="/">Home</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+       <div class="container bgc-primary" style="border-radius:.3rem;">
+           <div class="row">
 
-          <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item">
-                <a class="nav-link" href="/teamembers" >Team <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/demos">Demos</a>
-              </li>
-            </ul>
-          </div>
-        </nav>
+             <div class="col-md-10 pt-2 pb-2">
+                  <a href="/" >
+                      <img border="0" style="width:250px" src="/images/logo-inverted.png" />
+                  </a>
+             </div>
+
+             <div class="col-md-2" >
+                <nav class="navbar navbar-expand-md navbar-dark">
+
+                  <div class="collapse navbar-collapse" >
+                    <ul class="navbar-nav mr-auto">
+                      <li class="nav-item">
+                        <a class="nav-link" href="/teamembers" >Team <span class="sr-only">(current)</span></a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="/demos">Demos</a>
+                      </li>
+                    </ul>
+                  </div>
+
+                </nav>
+             </div>
+
+           </div>
+      </div>

@@ -53,6 +53,9 @@
                                  <button class="dropdown-item" type="button" onclick="startDemoDraw(${demo.id})">Start draw</button>
                                <#else>
                                   <a class="dropdown-item"  href="/demos/${demo.id}/draw">Play</a>
+                                  <#if demo.drawStatus.name() == "FINISHED">
+                                     <button class="dropdown-item" type="button" onclick="sendNotifications(${demo.id})">Notify about results</button>
+                                  </#if>
                                </#if>
                           </div>
                         </div>
@@ -96,4 +99,4 @@
     }
 </script>
 
-<#include "tiles/footer.ftl">
+<#include "/tiles/footer.ftl">

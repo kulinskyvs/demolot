@@ -3,7 +3,7 @@
  <link href="/css/form_validation.css" rel="stylesheet">
 
 <div class="container mt-3">
-    <div class="py-5 text-center">
+    <div class="py-3 text-center">
         <h2>${operation} team member</h2>
         <p class="lead">Fill the form below to add or update a team member</p>
     </div>
@@ -72,4 +72,4 @@
     </form>
 </div>
 
-<#include "tiles/footer.ftl">
+<#include "/tiles/footer.ftl">

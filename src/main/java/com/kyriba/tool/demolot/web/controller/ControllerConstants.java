@@ -39,4 +39,10 @@ public final class ControllerConstants
   {
     return Objects.isNull(entity.getId()) ? MODEL_OPERATION_CREATE : MODEL_OPERATION_EDIT;
   }
+
+
+  public static String withDemoRelatedPath(String relativePath)
+  {
+    return "demo/" + relativePath;
+  }
 }

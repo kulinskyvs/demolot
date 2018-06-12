@@ -144,35 +144,38 @@
         <tr>
             <td>
                 <div style="overflow:hidden;display:none;font-size:1px;color:#ffffff;line-height:1px;font-family:Arial;maxheight:0px;max-width:0px;opacity:0;">
-                    Welcome to Demolot!
+                     ${demo.title} draw results.
                 </div>
             </td>
         </tr>
     </table>
     <!-- pre-header end -->
 
-    <table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="ffffff" class="bg_color">
+<!-- header -->
+    <table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="ffffff">
 
         <tr>
             <td align="center">
                 <table border="0" align="center" width="590" cellpadding="0" cellspacing="0" class="container590">
 
                     <tr>
-                        <td align="center" style="color: #343434; font-size: 24px; font-family: Quicksand, Calibri, sans-serif; font-weight:700;letter-spacing: 3px; line-height: 35px;"
-                            class="main-header">
-                            <div style="line-height: 35px">
-                                 <#if demo.link?has_content>
-                                   <a target="_blank" href="${demo.link}">${demo.title}</a>
-                                 <#else>
-                                    ${demo.title}
-                                 </#if>
-                                 draw results.
-                            </div>
-                        </td>
+                        <td height="25" style="font-size: 25px; line-height: 25px;">&nbsp;</td>
                     </tr>
 
                     <tr>
-                        <td height="10" style="font-size: 10px; line-height: 10px;">&nbsp;</td>
+                        <td align="center">
+
+                            <table border="0" align="center" width="590" cellpadding="0" cellspacing="0" class="container590">
+
+                                <tr>
+                                    <td align="center" style="height:70px;">
+                                        <a href="" style="display: block; border-style: none !important; border: 0 !important;">
+                                          <img border="0" style="display: block; width: 50%; height:50%" src="cid:logo.png" />
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
                     </tr>
 
                     <tr>
@@ -189,6 +192,17 @@
                         <td height="20" style="font-size: 20px; line-height: 20px;">&nbsp;</td>
                     </tr>
 
+                </table>
+            </td>
+        </tr>
+    </table>
+    <!-- end header -->
+
+    <table border="0" width="100%" cellpadding="0" cellspacing="0" bgcolor="ffffff" class="bg_color">
+
+        <tr>
+            <td align="center">
+                <table border="0" align="center" width="590" cellpadding="0" cellspacing="0" class="container590">
                     <tr>
                         <td align="left">
                             <table border="0" width="590" align="center" cellpadding="0" cellspacing="0" class="container590">

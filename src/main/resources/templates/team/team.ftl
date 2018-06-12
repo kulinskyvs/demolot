@@ -64,4 +64,4 @@
     }
 </script>
 
-<#include "tiles/footer.ftl">
+<#include "/tiles/footer.ftl">

@@ -18,6 +18,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class EmailServiceImpl implements EmailService
 
 
   @Override
-  public void notifyDemoResults(Demo demo)
+  public void notifyDemoResults(Demo demo, String emailTemplate)
   {
     Multimap<TeamMember, DemoTask> tasksByMember =
         demo
@@ -58,15 +59,15 @@ public class EmailServiceImpl implements EmailService
                 (map1, map2) -> map1.putAll(map2));
 
     for (TeamMember member : tasksByMember.keySet()) {
-      notify(member, tasksByMember.get(member), demo);
+      notify(member, tasksByMember.get(member), demo, emailTemplate);
     }
   }
 
 
-  void notify(TeamMember winner, Collection<DemoTask> wonTasks, Demo demo)
+  void notify(TeamMember winner, Collection<DemoTask> wonTasks, Demo demo, String emailTemplate)
   {
     try {
-      Template template = freemarkerConfig.getTemplate("email-results.ftl");
+      Template template = freemarkerConfig.getTemplate(emailTemplate);
       String html = FreeMarkerTemplateUtils.processTemplateIntoString(
           template,
           ImmutableMap.of(
@@ -77,15 +78,13 @@ public class EmailServiceImpl implements EmailService
 
       MimeMessage message = emailSender.createMimeMessage();
 
-      MimeMessageHelper helper = new MimeMessageHelper(message,
-          MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-          StandardCharsets.UTF_8.name());
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
       helper.setTo(winner.getEmail());
       helper.setSubject("[Demolot]: " + demo.getTitle() + " results");
       helper.setText(html, true);
+      helper.addInline("logo.png", new ClassPathResource("/static/images/logo-transparent.png"));
 
       emailSender.send(message);
-
     }
     catch (MessagingException | IOException | TemplateException ex) {
       throw new RuntimeException("Unable to send an email", ex);

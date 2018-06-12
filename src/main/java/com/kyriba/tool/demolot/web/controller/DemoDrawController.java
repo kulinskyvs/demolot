@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import static com.kyriba.tool.demolot.web.controller.ControllerConstants.MODEL_DEMO;
-import static com.kyriba.tool.demolot.web.controller.ControllerConstants.URL_DEMOS_ROOT;
+import static com.kyriba.tool.demolot.web.controller.ControllerConstants.*;
 
 
 /**
@@ -32,6 +31,7 @@ import static com.kyriba.tool.demolot.web.controller.ControllerConstants.URL_DEM
 public class DemoDrawController
 {
   private static final String VIEW_DEMO_DRAW = "demoDraw";
+  private static final String EMAIL_TEMPLATE = "email-results.ftl";
 
 
   @Autowired
@@ -104,14 +104,14 @@ public class DemoDrawController
   private static String demoDrawView(final Demo demo, ModelMap modelMap)
   {
     modelMap.put(MODEL_DEMO, demo);
-    return VIEW_DEMO_DRAW;
+    return withDemoRelatedPath(VIEW_DEMO_DRAW);
   }
 
 
   private Demo withNotificationSent(Demo demo)
   {
     if (DrawStatus.FINISHED == demo.getDrawStatus()) {
-      emailService.notifyDemoResults(demo);
+      emailService.notifyDemoResults(demo, withDemoRelatedPath(EMAIL_TEMPLATE));
     }
     return demo;
   }

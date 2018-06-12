@@ -48,8 +48,7 @@ public class DemoController
   String showAllDemos(ModelMap modal)
   {
     modal.addAttribute("demos", demoDrawService.findAll());
-
-    return "demos";
+    return withDemoRelatedPath("demos");
   }
 
 
@@ -61,7 +60,7 @@ public class DemoController
 
     modelMap.put(MODEL_DEMO, newDemo);
     modelMap.put(MODEL_OPERATION, MODEL_OPERATION_CREATE);
-    return VIEW_DEMO;
+    return withDemoRelatedPath(VIEW_DEMO);
   }
 
 
@@ -71,7 +70,7 @@ public class DemoController
   {
     modelMap.put(MODEL_DEMO, demoDrawService.getOne(demoId));
     modelMap.put(MODEL_OPERATION, MODEL_OPERATION_EDIT);
-    return VIEW_DEMO;
+    return withDemoRelatedPath(VIEW_DEMO);
   }
 
 
@@ -83,7 +82,7 @@ public class DemoController
     if (result.hasErrors()) {
       modelMap.put(MODEL_DEMO, demo);
       modelMap.put(MODEL_OPERATION, ControllerConstants.modelOperation(demo));
-      return VIEW_DEMO;
+      return withDemoRelatedPath(VIEW_DEMO);
     }
     else {
       //submit and go to the list of members
@@ -107,7 +106,7 @@ public class DemoController
                   @PathVariable("demoId") final long demoId)
   {
     modal.addAttribute("demo", demoDrawService.getOne(demoId));
-    return "demoWithTasks";
+    return withDemoRelatedPath("demoWithTasks");
   }
 
 
@@ -116,7 +115,7 @@ public class DemoController
                                        ModelMap modelMap)
   {
     withTaskModel(modelMap, demoDrawService.getOne(demoId), new DemoTask(), MODEL_OPERATION_CREATE);
-    return VIEW_DEMO_TASK;
+    return withDemoRelatedPath(VIEW_DEMO_TASK);
   }
 
 
@@ -130,8 +129,8 @@ public class DemoController
         modelMap,
         demoDrawService.getOne(demoId),
         demo.getTaskById(taskId),
-        MODEL_OPERATION_EDIT);
-    return VIEW_DEMO_TASK;
+        withDemoRelatedPath(MODEL_OPERATION_EDIT));
+    return withDemoRelatedPath(VIEW_DEMO_TASK);
   }
 
 
@@ -145,7 +144,7 @@ public class DemoController
 
     if (result.hasErrors()) {
       withTaskModel(modelMap, demo, demoTask, ControllerConstants.modelOperation(demoTask));
-      return VIEW_DEMO_TASK;
+      return withDemoRelatedPath(VIEW_DEMO_TASK);
     }
     else {
       demoDrawService.submitTask(demo, demoTask);
@@ -177,4 +176,6 @@ public class DemoController
     );
     modelMap.put(MODEL_OPERATION, operation);
   }
+
+
 }

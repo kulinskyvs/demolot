@@ -47,7 +47,7 @@ public class TeamMemberController
         "members",
         teamMemberRepository.findAll(Sort.by(asc("id")))
     );
-    return "team";
+    return withTeamRelatedPath("team");
   }
 
 
@@ -56,7 +56,7 @@ public class TeamMemberController
   {
     modelMap.put(MODEL_MEMBER, new TeamMember());
     modelMap.put(MODEL_OPERATION, MODEL_OPERATION_CREATE);
-    return VIEW_MEMBER;
+    return withTeamRelatedPath(VIEW_MEMBER);
   }
 
 
@@ -66,7 +66,7 @@ public class TeamMemberController
   {
     modelMap.put(MODEL_MEMBER, teamMemberRepository.findById(memberId));
     modelMap.put(MODEL_OPERATION, MODEL_OPERATION_EDIT);
-    return VIEW_MEMBER;
+    return withTeamRelatedPath(VIEW_MEMBER);
   }
 
 
@@ -78,7 +78,7 @@ public class TeamMemberController
     if (result.hasErrors() || isUniquenessViolated(member, modelMap)) {
       modelMap.put(MODEL_MEMBER, member);
       modelMap.put(MODEL_OPERATION, ControllerConstants.modelOperation(member));
-      return VIEW_MEMBER;
+      return withTeamRelatedPath(VIEW_MEMBER);
     }
     else {
       //save and go to the list of members
@@ -108,5 +108,11 @@ public class TeamMemberController
       modelMap.put("validationError", "A member with the same name and surname already exists");
     }
     return isViolated;
+  }
+
+
+  private static String withTeamRelatedPath(String relativePath)
+  {
+    return "team/" + relativePath;
   }
 }

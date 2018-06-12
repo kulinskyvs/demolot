@@ -3,7 +3,7 @@
  <link href="/css/form_validation.css" rel="stylesheet">
 
 <div class="container mt-3">
-    <div class="py-5 text-center">
+    <div class="py-3 text-center">
         <h2>Draw of ${demo.title}</h2>
     </div>
 
@@ -17,7 +17,7 @@
           </#if>
            &nbsp;<button class="btn btn-warning" type="button" onclick="resetDraw(${demo.id})" >Reset results</button> &nbsp;
           <#if demo.drawStatus.name() == "FINISHED">
-            <button class="btn btn-info" type="button" onclick="sendNotifications(${demo.id})">Resend notifications</button>
+            <button class="btn btn-info" type="button" onclick="sendNotifications(${demo.id})">Notify about results</button>
           </#if>
       </div>
     </div>
@@ -82,6 +82,7 @@ function drawAllTasks(demoId) {
            'Do you really want define the winner for all the tasks?',
            "Yes",
            function() {
+               showProcessing();
                $.ajax({
                     url: '/demos/'+demoId+'/draw/tasks',
                     type: 'POST',
@@ -95,6 +96,7 @@ function drawAllTasks(demoId) {
     }
 
 function drawTask(demoId, taskId) {
+       showProcessing();
        $.ajax({
             url: '/demos/'+demoId+'/draw/tasks/'+taskId,
             type: 'POST',
@@ -112,6 +114,7 @@ function resetDraw(demoId, taskId) {
            'Do you really want to reset all the results and restart the draw of the demo?',
            "Yes",
            function() {
+               showProcessing();
                $.ajax({
                     url: '/demos/'+demoId+'/draw/tasks',
                     type: 'DELETE',
@@ -123,26 +126,7 @@ function resetDraw(demoId, taskId) {
            }
         );
 }
-
-function sendNotifications(demoId) {
-        showConfirmation(
-           "Confirm the action",
-           'Do you really want to send notification with the results to all the winners?',
-           "Yes",
-           function() {
-               $.ajax({
-                    url: '/demos/'+demoId+'/draw/notifications',
-                    type: 'POST',
-                    success: function(result) {
-                         window.location.href = '/demos/'+demoId+'/draw';
-                    },
-                    error: showAjaxError
-                });
-           }
-        );
-}
-
 </script>
 
 
-<#include "tiles/footer.ftl">
+<#include "/tiles/footer.ftl">

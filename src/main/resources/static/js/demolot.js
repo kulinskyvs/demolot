@@ -53,7 +53,22 @@ function showMessage(title, message, buttonLabel, buttonAction) {
   $('#messageModal').modal('show');
 }
 
+
+function showProcessing() {
+   $('#pleaseWaitDialog').modal('show');
+}
+
+function closeProcessing() {
+   if ($('#pleaseWaitDialog').is(':visible')) {
+       $('#pleaseWaitDialog').modal('hide');
+   }
+}
+
+
 function showAjaxError(jqxhr) {
+   //close the processing in case it's visible
+   closeProcessing();
+
   var json = $.parseJSON(jqxhr.responseText);
 
    /* showMessage('Oops. Something went wrong',
@@ -78,5 +93,27 @@ function showAjaxError(jqxhr) {
               +"<tr><td>path</td><td>"+json.path+"</td></tr>"
               +"</table>"
        	   +"</div>"
+        );
+}
+
+/*
+* send notification of the demo with the given identifier
+*/
+function sendNotifications(demoId) {
+        showConfirmation(
+           "Confirm the action",
+           'Do you really want to send notification with the results to all the winners?',
+           "Yes",
+           function() {
+               showProcessing();
+               $.ajax({
+                    url: '/demos/'+demoId+'/draw/notifications',
+                    type: 'POST',
+                    success: function(result) {
+                        closeProcessing();
+                    },
+                    error: showAjaxError
+               });
+           }
         );
 }

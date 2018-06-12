@@ -1,4 +1,19 @@
 /* Move down content because we have a fixed navbar that is 3.5rem tall */
 body {
-  padding-top: 3.5rem;
+  /*adding-top: 3.5rem;*/
 }
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255,255,255);
+}
+
+.bgc-primary {
+    background-color: #385B95;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #385B95;
+    border-color: #385B95;
+}
+

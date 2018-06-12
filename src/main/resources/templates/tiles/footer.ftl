@@ -44,6 +44,23 @@
       </div>
     </div>
 
+    <!-- processing modal -->
+    <div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+          <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                     <table>
+                       <tr>
+                        <td style="white-space:nowrap">
+                           <img border="0" src="/images/loading-spinner.svg" />
+                        </td>
+                        <td style="width:100%;text-align:left;white-space:nowrap;font-size:1.75rem;"> Processing... </td>
+                       </tr>
+                     </table>
+                  </div>
+                </div>
+          </div>
+    </div>
 
     <!-- jQuery and bootstap -->
     <script src="/js/lib/jquery.3.3.1.min.js"></script>

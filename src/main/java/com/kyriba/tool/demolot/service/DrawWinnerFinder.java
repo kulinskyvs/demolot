@@ -58,7 +58,7 @@ public class DrawWinnerFinder
         .filter(member -> !member.equalsById(task.getOwner()))
         .collect(Collectors.toList());
 
-    return find(members);
+    return members.isEmpty() ? task.getOwner() : find(members);
   }
 
 

@@ -3,7 +3,7 @@
  <link href="/css/form_validation.css" rel="stylesheet">
 
 <div class="container mt-3">
-    <div class="py-5 text-center">
+    <div class="py-3 text-center">
         <h2>${demo.title} tasks</h2>
         <p class="lead">Define the lists of tasks to be shown during the ${demo.title}
           <#if demo.summary?has_content>(${demo.summary})</#if>
@@ -85,4 +85,4 @@
 </script>
 
 
-<#include "tiles/footer.ftl">
+<#include "/tiles/footer.ftl">

@@ -2,17 +2,16 @@
 
 <main role="main" id="mainContainer">
 
-  <!-- Main jumbotron for a primary marketing message or call to action -->
-  <div class="jumbotron">
-    <div class="container">
+  <div class="container mt-3">
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
       <h1 class="display-3">Welcome to Demolot!</h1>
       <p>Demolot is a simple application intended to turn the process of deciding who is repsonsible
       to show a task on next Spint Demo into fun. Manage your team members, create Demo, perform it's draw and let's have fun.</p>
       <p><a class="btn btn-primary btn-lg" href="/demos" role="button">Start playing &raquo;</a></p>
     </div>
-  </div>
 
-  <div class="container">
     <!-- Example row of columns -->
     <div class="row">
       <div class="col-md-6">
@@ -35,5 +34,5 @@
 
 </main>
 
-<#include "tiles/footer.ftl">
+<#include "/tiles/footer.ftl">
 
