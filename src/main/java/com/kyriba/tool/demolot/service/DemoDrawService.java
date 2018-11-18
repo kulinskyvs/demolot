@@ -10,9 +10,10 @@ package com.kyriba.tool.demolot.service;
 
 import com.kyriba.tool.demolot.domain.Demo;
 import com.kyriba.tool.demolot.domain.DemoTask;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 
 /**
@@ -24,37 +25,37 @@ public interface DemoDrawService
 
   boolean existsById(long id);
 
-  Demo getOne(long id);
+  Mono<Demo> getOne(long id);
 
-  List<Demo> findAll();
-
-
-  @Transactional
-  Demo submit(Demo toBeSubmitted);
+  Flux<Demo> findAll();
 
 
   @Transactional
-  Demo submitTask(Demo demo, DemoTask toBeSubmitted);
+  Mono<Demo> submit(Demo toBeSubmitted);
 
 
   @Transactional
-  Demo deleteTask(Demo demo, long taskId);
+  Mono<Demo> submitTask(Demo demo, DemoTask toBeSubmitted);
 
 
   @Transactional
-  void deleteById(long id);
+  Mono<Demo> deleteTask(Demo demo, long taskId);
 
 
   @Transactional
-  Demo startDraw(long id);
-
-  @Transactional
-  Demo drawTasks(long id);
+  Mono<Void> deleteById(long id);
 
 
   @Transactional
-  Demo drawTask(long demoId, long taskId);
+  Mono<Demo> startDraw(long id);
 
   @Transactional
-  Demo resetDraw(long demoId);
+  Mono<Demo> drawTasks(long id);
+
+
+  @Transactional
+  Mono<Demo> drawTask(long demoId, long taskId);
+
+  @Transactional
+  Mono<Demo> resetDraw(long demoId);
 }

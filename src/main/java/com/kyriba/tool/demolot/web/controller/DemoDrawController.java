@@ -68,9 +68,10 @@ public class DemoDrawController {
     public Mono<String> drawAllTasks(@PathVariable("demoId") final long demoId,
                                      Model model) {
         return demoDrawView(
-                withNotificationSent(demoDrawService.drawTasks(demoId)),
-                model
-        );
+                demoDrawService
+                        .drawTasks(demoId)
+                        .map(this::withNotificationSent),
+                model);
     }
 
 
@@ -79,7 +80,9 @@ public class DemoDrawController {
                                  @PathVariable("taskId") final long taskId,
                                  Model model) {
         return demoDrawView(
-                withNotificationSent(demoDrawService.drawTask(demoId, taskId)),
+                demoDrawService
+                        .drawTask(demoId, taskId)
+                        .map(this::withNotificationSent),
                 model
         );
     }
@@ -88,7 +91,9 @@ public class DemoDrawController {
     @DeleteMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks")
     public Mono<String> resetDraw(@PathVariable("demoId") final long demoId,
                                   Model model) {
-        return demoDrawView(demoDrawService.resetDraw(demoId), model);
+        return demoDrawView(
+                demoDrawService.resetDraw(demoId), model
+        );
     }
 
 
@@ -96,17 +101,24 @@ public class DemoDrawController {
     public Mono<String> sendNotification(@PathVariable("demoId") final long demoId,
                                          Model model) {
         return demoDrawView(
-                withNotificationSent(demoDrawService.getOne(demoId)),
-                model);
+                demoDrawService
+                        .getOne(demoId)
+                        .map(this::withNotificationSent),
+                model
+        );
     }
 
 
-    private static Mono<String> demoDrawView(final Demo demo, Model model) {
-        model.addAttribute(MODEL_DEMO, demo);
-        List<DemoTask> demoTasks = new ArrayList<>(demo.getTasks());
-        demoTasks.sort(Comparator.comparing(DemoTask::getId));
-        model.addAttribute(MODEL_DEMO_TASKS, demoTasks);
-        return withDemoRelatedPath(VIEW_DEMO_DRAW);
+    private static Mono<String> demoDrawView(final Mono<Demo> monoDemo, Model model) {
+        return monoDemo.flatMap(demo -> {
+            model.addAttribute(MODEL_DEMO, demo);
+
+            List<DemoTask> demoTasks = new ArrayList<>(demo.getTasks());
+            demoTasks.sort(Comparator.comparing(DemoTask::getId));
+            model.addAttribute(MODEL_DEMO_TASKS, demoTasks);
+
+            return withDemoRelatedPath(VIEW_DEMO_DRAW);
+        });
     }
 
 

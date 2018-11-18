@@ -65,9 +65,13 @@ public class DemoController {
     @GetMapping(value = URL_DEMOS_ROOT + "/{demoId}/form")
     public Mono<String> showDemoEditForm(@PathVariable("demoId") final long demoId,
                                          Model model) {
-        model.addAttribute(MODEL_DEMO, demoDrawService.getOne(demoId));
-        model.addAttribute(MODEL_OPERATION, MODEL_OPERATION_EDIT);
-        return withDemoRelatedPath(VIEW_DEMO);
+        return demoDrawService
+            .getOne(demoId)
+            .flatMap(demo -> {
+                model.addAttribute(MODEL_DEMO, demo);
+                model.addAttribute(MODEL_OPERATION, MODEL_OPERATION_EDIT);
+                return withDemoRelatedPath(VIEW_DEMO);
+            });
     }
 
 
@@ -80,8 +84,9 @@ public class DemoController {
             return withDemoRelatedPath(VIEW_DEMO);
         } else {
             //submit and go to the list of members
-            demoDrawService.submit(demo);
-            return Mono.just("redirect:" + URL_DEMOS_ROOT);
+            return demoDrawService
+                .submit(demo)
+                .thenReturn("redirect:" + URL_DEMOS_ROOT);
         }
     }
 
@@ -90,24 +95,33 @@ public class DemoController {
     @ResponseStatus(value = HttpStatus.OK)
     public Mono<Void> deleteDemo(@PathVariable("demoId") final long demoId) {
         //TODO: handle EmptyResultDataAccessException??
-        demoDrawService.deleteById(demoId);
-        return Mono.empty();
+        return demoDrawService
+            .deleteById(demoId)
+            .then();
     }
 
 
     @GetMapping(value = URL_DEMOS_ROOT + "/{demoId}/formtask")
     public Mono<String> showDemo(Model model,
                                  @PathVariable("demoId") final long demoId) {
-        model.addAttribute("demo", demoDrawService.getOne(demoId));
-        return withDemoRelatedPath("demoWithTasks");
+        return demoDrawService
+            .getOne(demoId)
+            .flatMap(demo -> {
+                model.addAttribute("demo", demo);
+                return withDemoRelatedPath("demoWithTasks");
+            });
     }
 
 
     @GetMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/form")
     public Mono<String> showDemoTaskCreateForm(@PathVariable("demoId") final long demoId,
                                                Model model) {
-        withTaskModel(model, demoDrawService.getOne(demoId), new DemoTask(), MODEL_OPERATION_CREATE);
-        return withDemoRelatedPath(VIEW_DEMO_TASK);
+        return demoDrawService
+            .getOne(demoId)
+            .flatMap(demo -> {
+                withTaskModel(model, demo, new DemoTask(), MODEL_OPERATION_CREATE);
+                return withDemoRelatedPath(VIEW_DEMO_TASK);
+            });
     }
 
 
@@ -115,13 +129,12 @@ public class DemoController {
     public Mono<String> showDemoTaskEditForm(@PathVariable("demoId") final long demoId,
                                              @PathVariable("taskId") final long taskId,
                                              Model model) {
-        Demo demo = demoDrawService.getOne(demoId);
-        withTaskModel(
-                model,
-                demoDrawService.getOne(demoId),
-                demo.getTaskById(taskId),
-                withDemoRelatedPath(MODEL_OPERATION_EDIT).block());
-        return withDemoRelatedPath(VIEW_DEMO_TASK);
+        return demoDrawService
+            .getOne(demoId)
+            .flatMap(demo -> {
+                withTaskModel(model, demo, demo.getTaskById(taskId), withDemoRelatedPath(MODEL_OPERATION_EDIT).block());
+                return withDemoRelatedPath(VIEW_DEMO_TASK);
+            });
     }
 
 
@@ -130,14 +143,20 @@ public class DemoController {
                                        @Valid DemoTask demoTask,
                                        BindingResult result,
                                        Model model) {
-        Demo demo = demoDrawService.getOne(demoId);
+        return demoDrawService
+            .getOne(demoId)
+            .flatMap(demo -> submitDemoTask(demo, demoTask, result, model));
+    }
 
+
+    private Mono<String> submitDemoTask(Demo demo, DemoTask demoTask, BindingResult result, Model model) {
         if (result.hasErrors()) {
             withTaskModel(model, demo, demoTask, ControllerConstants.modelOperation(demoTask));
             return withDemoRelatedPath(VIEW_DEMO_TASK);
         } else {
-            demoDrawService.submitTask(demo, demoTask);
-            return Mono.just("redirect:" + URL_DEMOS_ROOT + "/" + demoId + "/formtask/");
+            return demoDrawService
+                .submitTask(demo, demoTask)
+                .thenReturn("redirect:" + URL_DEMOS_ROOT + "/" + demo.getId() + "/formtask/");
         }
     }
 
@@ -147,23 +166,26 @@ public class DemoController {
     public Mono<Void> deleteDemoTask(@PathVariable("demoId") final long demoId,
                                      @PathVariable("taskId") final long taskId) {
         //TODO: handle EmptyResultDataAccessException??
-        demoDrawService.deleteTask(demoDrawService.getOne(demoId), taskId);
-        return Mono.empty();
+        return demoDrawService
+            .getOne(demoId)
+            .flatMap(demo -> demoDrawService.deleteTask(demo, taskId))
+            .then();
     }
 
 
     private void withTaskModel(Model model, Demo demo, DemoTask task, String operation) {
         model.addAttribute(MODEL_DEMO, demo);
         model.addAttribute(MODEL_DEMO_TASK, task);
-        model.addAttribute(MODEL_MEMBERS,
-                teamMemberRepository.findActiveOnly()
-                        .stream()
-                        .map(DEFAULT_FORMATTER)
-                        .sorted()
-                        .collect(Collectors.toList())
+        model.addAttribute(
+            MODEL_MEMBERS,
+            teamMemberRepository
+                .findActiveOnly()
+                .stream()
+                .map(DEFAULT_FORMATTER)
+                .sorted()
+                .collect(Collectors.toList())
         );
         model.addAttribute(MODEL_OPERATION, operation);
     }
-
 
 }
