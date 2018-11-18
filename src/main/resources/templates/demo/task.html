@@ -1,0 +1,84 @@
+<data-th-block data-th-insert="~{tiles/header}"/>
+<link href="/css/form_validation.css" rel="stylesheet">
+
+<div class="container mt-3">
+    <div class="py-3 text-center">
+        <h2 data-th-text="|${operation} task for ${demo.title}|">{operation} task for {demo.title}</h2>
+        <p class="lead" data-th-text="|Fill the form below to create or update a task ${demo.title}|">
+            Fill the form below to create or update a task {demo.title}
+        </p>
+    </div>
+
+    <div class="row" data-th-if="${validationError}">
+        <div class="alert alert-danger col-md-12" role="alert" data-th-text="${validationError}">validation error</div>
+    </div>
+
+
+    <form action="#" data-th-action="@{/demos/{id}/tasks(id=${demo.id})}" data-th-object="${demoTask}" method="post">
+
+        <div class="row">
+            <div class="col-md-4 mb-3 text-right">
+                <label for="title">Key</label>
+            </div>
+            <div class="col-md-4 mb-3">
+                <input type="text" class='form-control' data-th-field="*{key}"/>
+                <span class="invalid-feedback"
+                      data-th-if="${#fields.hasErrors('key')}" data-th-errors="*{key}">key error</span>
+            </div>
+            <div class="col-md-4">&nbsp;</div>
+        </div> <!-- row -->
+
+        <div class="row">
+            <div class="col-md-4 mb-3 text-right">
+                <label for="title">Title</label>
+            </div>
+            <div class="col-md-8 mb-3">
+                <input type="text" class='form-control' data-th-field="*{title}"/>
+                <span class="invalid-feedback"
+                      data-th-if="${#fields.hasErrors('title')}" data-th-errors="*{title}">title error</span>
+            </div>
+        </div> <!-- row -->
+
+        <div class="row">
+            <div class="col-md-4 mb-3 text-right">
+                <label for="title">Owner</label>
+            </div>
+            <div class="col-md-8 mb-3">
+                <select class='form-control' data-th-field="*{owner}">
+                    <option data-th-each="member : ${members}"
+                            data-th-value="${member}"
+                            data-th-text="${member}">member
+                    </option>
+                </select>
+                <span class="invalid-feedback"
+                      data-th-if="${#fields.hasErrors('owner')}" data-th-errors="*{owner}">owner error</span>
+            </div>
+        </div> <!-- row -->
+
+        <div class="row">
+            <div class="col-md-4 mb-3 text-right">
+                <label for="firstName">Link</label>
+            </div>
+            <div class="col-md-8 mb-3">
+                <input type="text" class='form-control' data-th-field="*{link}"/>
+                <span class="invalid-feedback"
+                      data-th-if="${#fields.hasErrors('link')}" data-th-errors="*{link}">link error</span>
+            </div>
+        </div> <!-- row -->
+
+        <hr class="mb-4">
+        <input type="hidden" data-th-field="*{id}">
+        <div class="row">
+            <div class="col-md-8 "> &nbsp;</div>
+            <div class="col-md-2 text-right">
+                <input type="submit" value="Save" class="btn btn-success btn-lg btn-block">
+            </div>
+            <div class="col-md-2 text-right">
+                <a role="button" class="btn btn-warning btn-lg btn-block"
+                   data-th-href="@{/demos/{id}/formtask(id=${demo.id})}">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<data-th-block data-th-insert="~{tiles/footer}"/>

@@ -14,19 +14,16 @@ import com.google.common.collect.Multimap;
 import com.kyriba.tool.demolot.domain.Demo;
 import com.kyriba.tool.demolot.domain.DemoTask;
 import com.kyriba.tool.demolot.domain.TeamMember;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
@@ -36,58 +33,51 @@ import java.util.Collection;
  * @version 1.0
  */
 @Service
-public class EmailServiceImpl implements EmailService
-{
-  @Autowired
-  public JavaMailSender emailSender;
+public class EmailServiceImpl implements EmailService {
+    @Autowired
+    public JavaMailSender emailSender;
 
-  @Autowired
-  private Configuration freemarkerConfig;
+    @Autowired
+    private TemplateEngine templateEngine;
 
+    @Override
+    public void notifyDemoResults(Demo demo, String emailTemplate) {
+        Multimap<TeamMember, DemoTask> tasksByMember =
+                demo
+                        .getTasks()
+                        .stream()
+                        .filter(DemoTask::hasWinner)
+                        .collect(
+                                HashMultimap::create,
+                                (multimap, task) -> multimap.put(task.getWinner(), task),
+                                (map1, map2) -> map1.putAll(map2));
 
-  @Override
-  public void notifyDemoResults(Demo demo, String emailTemplate)
-  {
-    Multimap<TeamMember, DemoTask> tasksByMember =
-        demo
-            .getTasks()
-            .stream()
-            .filter(DemoTask::hasWinner)
-            .collect(
-                HashMultimap::create,
-                (multimap, task) -> multimap.put(task.getWinner(), task),
-                (map1, map2) -> map1.putAll(map2));
-
-    for (TeamMember member : tasksByMember.keySet()) {
-      notify(member, tasksByMember.get(member), demo, emailTemplate);
+        for (TeamMember member : tasksByMember.keySet()) {
+            notify(member, tasksByMember.get(member), demo, emailTemplate);
+        }
     }
-  }
 
 
-  void notify(TeamMember winner, Collection<DemoTask> wonTasks, Demo demo, String emailTemplate)
-  {
-    try {
-      Template template = freemarkerConfig.getTemplate(emailTemplate);
-      String html = FreeMarkerTemplateUtils.processTemplateIntoString(
-          template,
-          ImmutableMap.of(
-              "member", winner,
-              "demo", demo,
-              "tasks", wonTasks
-          ));
+    void notify(TeamMember winner, Collection<DemoTask> wonTasks, Demo demo, String emailTemplate) {
+        try {
+            Context context = new Context();
+            context.setVariables(ImmutableMap.of(
+                    "member", winner,
+                    "demo", demo,
+                    "tasks", wonTasks
+            ));
+            String html = templateEngine.process(emailTemplate, context);
+            MimeMessage message = emailSender.createMimeMessage();
 
-      MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+            helper.setTo(winner.getEmail());
+            helper.setSubject("[Demolot]: " + demo.getTitle() + " results");
+            helper.setText(html, true);
+            helper.addInline("logo.png", new ClassPathResource("/static/images/logo-transparent.png"));
 
-      MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
-      helper.setTo(winner.getEmail());
-      helper.setSubject("[Demolot]: " + demo.getTitle() + " results");
-      helper.setText(html, true);
-      helper.addInline("logo.png", new ClassPathResource("/static/images/logo-transparent.png"));
-
-      emailSender.send(message);
+            emailSender.send(message);
+        } catch (MessagingException ex) {
+            throw new RuntimeException("Unable to send an email", ex);
+        }
     }
-    catch (MessagingException | IOException | TemplateException ex) {
-      throw new RuntimeException("Unable to send an email", ex);
-    }
-  }
 }

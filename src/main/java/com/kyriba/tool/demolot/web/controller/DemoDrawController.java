@@ -9,16 +9,23 @@
 package com.kyriba.tool.demolot.web.controller;
 
 import com.kyriba.tool.demolot.domain.Demo;
+import com.kyriba.tool.demolot.domain.DemoTask;
 import com.kyriba.tool.demolot.domain.DrawStatus;
 import com.kyriba.tool.demolot.repository.TeamMemberRepository;
 import com.kyriba.tool.demolot.service.DemoDrawService;
 import com.kyriba.tool.demolot.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
+import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import static com.kyriba.tool.demolot.web.controller.ControllerConstants.*;
 
@@ -28,91 +35,85 @@ import static com.kyriba.tool.demolot.web.controller.ControllerConstants.*;
  * @version 1.0
  */
 @Controller
-public class DemoDrawController
-{
-  private static final String VIEW_DEMO_DRAW = "demoDraw";
-  private static final String EMAIL_TEMPLATE = "email-results.ftl";
+public class DemoDrawController {
+    private static final String VIEW_DEMO_DRAW = "demoDraw";
+    private static final String EMAIL_TEMPLATE = "email-results";
 
 
-  @Autowired
-  private DemoDrawService demoDrawService;
+    @Autowired
+    private DemoDrawService demoDrawService;
 
-  @Autowired
-  private EmailService emailService;
+    @Autowired
+    private EmailService emailService;
 
-  @Autowired
-  private TeamMemberRepository teamMemberRepository;
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw", method = RequestMethod.POST)
-  public String startDemoDraw(@PathVariable("demoId") final long demoId,
-                              ModelMap modelMap)
-  {
-    return demoDrawView(demoDrawService.startDraw(demoId), modelMap);
-  }
+    @Autowired
+    private TeamMemberRepository teamMemberRepository;
 
 
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw", method = RequestMethod.GET)
-  public String showDemoDrawForm(@PathVariable("demoId") final long demoId,
-                                 ModelMap modelMap)
-  {
-    return demoDrawView(demoDrawService.getOne(demoId), modelMap);
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks", method = RequestMethod.POST)
-  public String drawAllTasks(@PathVariable("demoId") final long demoId,
-                             ModelMap modelMap)
-  {
-    return demoDrawView(
-        withNotificationSent(demoDrawService.drawTasks(demoId)),
-        modelMap
-    );
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks/{taskId}", method = RequestMethod.POST)
-  public String drawTask(@PathVariable("demoId") final long demoId,
-                         @PathVariable("taskId") final long taskId,
-                         ModelMap modelMap)
-  {
-    return demoDrawView(
-        withNotificationSent(demoDrawService.drawTask(demoId, taskId)),
-        modelMap
-    );
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks", method = RequestMethod.DELETE)
-  public String resetDraw(@PathVariable("demoId") final long demoId,
-                          ModelMap modelMap)
-  {
-    return demoDrawView(demoDrawService.resetDraw(demoId), modelMap);
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/notifications", method = RequestMethod.POST)
-  public String sendNotification(@PathVariable("demoId") final long demoId,
-                                 ModelMap modelMap)
-  {
-    return demoDrawView(
-        withNotificationSent(demoDrawService.getOne(demoId)),
-        modelMap);
-  }
-
-
-  private static String demoDrawView(final Demo demo, ModelMap modelMap)
-  {
-    modelMap.put(MODEL_DEMO, demo);
-    return withDemoRelatedPath(VIEW_DEMO_DRAW);
-  }
-
-
-  private Demo withNotificationSent(Demo demo)
-  {
-    if (DrawStatus.FINISHED == demo.getDrawStatus()) {
-      emailService.notifyDemoResults(demo, withDemoRelatedPath(EMAIL_TEMPLATE));
+    @PostMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw")
+    public Mono<String> startDemoDraw(@PathVariable("demoId") final long demoId,
+                                      Model model) {
+        return demoDrawView(demoDrawService.startDraw(demoId), model);
     }
-    return demo;
-  }
+
+
+    @GetMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw")
+    public Mono<String> showDemoDrawForm(@PathVariable("demoId") final long demoId,
+                                         Model model) {
+        return demoDrawView(demoDrawService.getOne(demoId), model);
+    }
+
+
+    @PostMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks")
+    public Mono<String> drawAllTasks(@PathVariable("demoId") final long demoId,
+                                     Model model) {
+        return demoDrawView(
+                withNotificationSent(demoDrawService.drawTasks(demoId)),
+                model
+        );
+    }
+
+
+    @PostMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks/{taskId}")
+    public Mono<String> drawTask(@PathVariable("demoId") final long demoId,
+                                 @PathVariable("taskId") final long taskId,
+                                 Model model) {
+        return demoDrawView(
+                withNotificationSent(demoDrawService.drawTask(demoId, taskId)),
+                model
+        );
+    }
+
+
+    @DeleteMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/tasks")
+    public Mono<String> resetDraw(@PathVariable("demoId") final long demoId,
+                                  Model model) {
+        return demoDrawView(demoDrawService.resetDraw(demoId), model);
+    }
+
+
+    @PostMapping(value = URL_DEMOS_ROOT + "/{demoId}/draw/notifications")
+    public Mono<String> sendNotification(@PathVariable("demoId") final long demoId,
+                                         Model model) {
+        return demoDrawView(
+                withNotificationSent(demoDrawService.getOne(demoId)),
+                model);
+    }
+
+
+    private static Mono<String> demoDrawView(final Demo demo, Model model) {
+        model.addAttribute(MODEL_DEMO, demo);
+        List<DemoTask> demoTasks = new ArrayList<>(demo.getTasks());
+        demoTasks.sort(Comparator.comparing(DemoTask::getId));
+        model.addAttribute(MODEL_DEMO_TASKS, demoTasks);
+        return withDemoRelatedPath(VIEW_DEMO_DRAW);
+    }
+
+
+    private Demo withNotificationSent(Demo demo) {
+        if (DrawStatus.FINISHED == demo.getDrawStatus()) {
+            emailService.notifyDemoResults(demo, withDemoRelatedPath(EMAIL_TEMPLATE).block());
+        }
+        return demo;
+    }
 }

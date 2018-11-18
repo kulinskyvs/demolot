@@ -1,0 +1,75 @@
+<data-th-block data-th-insert="~{tiles/header}"/>
+<link href="/css/form_validation.css" rel="stylesheet">
+
+<div class="container mt-3">
+    <div class="py-3 text-center">
+        <h2 data-th-text="|${operation} team member|">{operation} team member</h2>
+        <p class="lead">Fill the form below to add or update a team member</p>
+    </div>
+
+    <div class="row" data-th-if="${validationError}">
+        <div class="alert alert-danger col-md-12" role="alert" data-th-text="${validationError}"></div>
+    </div>
+
+    <form action="#" data-th-action="@{/teamembers}" data-th-object="${teamMember}" method="post">
+
+        <div class="row">
+            <div class="col-md-4 mb-3 text-right">
+                <label for="firstName">First name</label>
+            </div>
+            <div class="col-md-8 mb-3">
+                <input type="text" class='form-control' data-th-field="*{name}"/>
+                <span class="invalid-feedback"
+                      data-th-if="${#fields.hasErrors('name')}" data-th-errors="*{name}">Name Error</span>
+            </div>
+        </div> <!-- row -->
+
+        <div class="row">
+            <div class="col-md-4 mb-3 text-right">
+                <label for="lastName">Last name</label>
+            </div>
+            <div class="col-md-8 mb-3">
+                <input type="text" class='form-control' data-th-field="*{surname}">
+                <span class="invalid-feedback"
+                      data-th-if="${#fields.hasErrors('surname')}" data-th-errors="*{surname}">Surname Error</span>
+
+            </div>
+        </div> <!-- row -->
+
+        <div class="row">
+            <div class="col-md-4 mb-3 text-right">
+                <label for="email">Email</label>
+            </div>
+            <div class="col-md-8 mb-3">
+                <input type="text" class='form-control' data-th-field="*{email}">
+                <span class="invalid-feedback"
+                      data-th-if="${#fields.hasErrors('email')}" data-th-errors="*{email}">Email Error</span>
+            </div>
+        </div> <!-- row -->
+
+        <div class="row">
+            <div class="col-md-4 mb-3 text-right">
+                <label class="form-check-label" data-th-for="${#ids.next('active')}" >Active</label>
+            </div>
+            <div class="col-md-8 mb-3">
+                <div class="form-group form-check">
+                    <input type="checkbox" class='form-check-input' data-th-field="*{active}"/>
+                </div>
+            </div>
+        </div> <!-- row -->
+
+        <hr class="mb-4">
+        <input type="hidden" data-th-field="*{id}">
+        <div class="row">
+            <div class="col-md-8 "> &nbsp;</div>
+            <div class="col-md-2 text-right">
+                <input type="submit" value="Save" class="btn btn-success btn-lg btn-block">
+            </div>
+            <div class="col-md-2 text-right">
+                <a role="button" class="btn btn-warning btn-lg btn-block" data-th-href="@{/teamembers}">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<data-th-block data-th-insert="~{tiles/footer}"/>

@@ -1,13 +1,13 @@
 buildscript {
-	ext {
-		springBootVersion = '2.0.1.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '2.0.1.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
@@ -20,24 +20,24 @@ version = '1.0.3-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
 dependencies {
-	compile('javax.xml.bind:jaxb-api:2.3.0')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.boot:spring-boot-starter-freemarker')
-	compile('org.springframework.boot:spring-boot-starter-mail')
-	compile('org.springframework.boot:spring-boot-devtools')
-	compile('org.apache.commons:commons-lang3:3.7')
-	compile('com.google.guava:guava:25.1-jre')
-	runtime('org.postgresql:postgresql')
+    compile('javax.xml.bind:jaxb-api:2.3.0')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-webflux')
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile('org.springframework.boot:spring-boot-starter-mail')
+    compile('org.springframework.boot:spring-boot-devtools')
+    compile('org.apache.commons:commons-lang3:3.7')
+    compile('com.google.guava:guava:25.1-jre')
+    runtime('org.postgresql:postgresql')
 
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('com.github.springtestdbunit:spring-test-dbunit:1.2.0')
-	testCompile('org.dbunit:dbunit:2.5.0')
-	testCompile('com.h2database:h2')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('com.github.springtestdbunit:spring-test-dbunit:1.2.0')
+    testCompile('org.dbunit:dbunit:2.5.0')
+    testCompile('com.h2database:h2')
 
 }

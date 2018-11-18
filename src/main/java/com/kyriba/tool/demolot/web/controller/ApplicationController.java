@@ -9,9 +9,8 @@
 package com.kyriba.tool.demolot.web.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -19,12 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @version 1.0
  */
 @Controller
-public class ApplicationController
-{
+public class ApplicationController {
 
-  @RequestMapping("/")
-  String home(ModelMap modal)
-  {
-    return "index";
-  }
+    @RequestMapping("/")
+    Mono<String> home() {
+        return Mono.just("index");
+    }
 }

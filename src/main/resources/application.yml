@@ -1,0 +1,44 @@
+logging:
+  level:
+    root: INFO
+  path: ./logs/
+
+spring:
+  datasource:
+    password: SYSTEM
+    url: jdbc:postgresql://localhost:5432/demolot
+    username: postgres
+#    url: jdbc:h2:file:~/demolot;AUTO_SERVER=true;DB_CLOSE_ON_EXIT=FALSE
+#    username: sa
+
+  h2:
+    console:
+      enabled: false
+      path: /h2
+
+  jpa:
+#   Because detection is disabled we have to set correct dialect by hand.
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    hibernate:
+      ddl-auto :  update
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        temp:
+#Disable feature detection by this undocumented parameter. Check the org.hibernate.engine.jdbc.internal.JdbcServiceImpl.configure method for more details.
+          use_jdbc_metadata_defaults :  false
+
+  mail:
+    host: smtp.gmail.com
+    password: Demolot2018
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    username: demolotkyc@gmail.com

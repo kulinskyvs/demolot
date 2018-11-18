@@ -3,8 +3,8 @@ package com.kyriba.tool.demolot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.FixedLocaleResolver;
+//import org.springframework.web.servlet.LocaleResolver;
+//import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 
 import java.util.Locale;
 
@@ -19,9 +19,10 @@ public class DemolotApplication
   }
 
 
-  @Bean
-  public LocaleResolver localeResolver()
-  {
-    return new FixedLocaleResolver(Locale.ENGLISH);
-  }
+//  TODO: investigate how to use i18n with spwing web flux
+//  @Bean
+//  public LocaleResolver localeResolver()
+//  {
+//    return new FixedLocaleResolver(Locale.ENGLISH);
+//  }
 }

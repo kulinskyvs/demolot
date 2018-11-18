@@ -15,9 +15,10 @@ import com.kyriba.tool.demolot.service.DemoDrawService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -32,150 +33,137 @@ import static com.kyriba.tool.demolot.web.controller.ControllerConstants.*;
  * @version 1.0
  */
 @Controller
-public class DemoController
-{
-  private static final String VIEW_DEMO = "demo";
-  private static final String VIEW_DEMO_TASK = "task";
+public class DemoController {
+    private static final String VIEW_DEMO = "demo";
+    private static final String VIEW_DEMO_TASK = "task";
 
-  @Autowired
-  private DemoDrawService demoDrawService;
+    @Autowired
+    private DemoDrawService demoDrawService;
 
-  @Autowired
-  private TeamMemberRepository teamMemberRepository;
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT, method = RequestMethod.GET)
-  String showAllDemos(ModelMap modal)
-  {
-    modal.addAttribute("demos", demoDrawService.findAll());
-    return withDemoRelatedPath("demos");
-  }
+    @Autowired
+    private TeamMemberRepository teamMemberRepository;
 
 
-  @RequestMapping(value = URL_DEMOS_ROOT + "/form", method = RequestMethod.GET)
-  public String showDemoCreateForm(ModelMap modelMap)
-  {
-    Demo newDemo = new Demo();
-    newDemo.setPlannedDate(LocalDate.now());
-
-    modelMap.put(MODEL_DEMO, newDemo);
-    modelMap.put(MODEL_OPERATION, MODEL_OPERATION_CREATE);
-    return withDemoRelatedPath(VIEW_DEMO);
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/form", method = RequestMethod.GET)
-  public String showDemoEditForm(@PathVariable("demoId") final long demoId,
-                                 ModelMap modelMap)
-  {
-    modelMap.put(MODEL_DEMO, demoDrawService.getOne(demoId));
-    modelMap.put(MODEL_OPERATION, MODEL_OPERATION_EDIT);
-    return withDemoRelatedPath(VIEW_DEMO);
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT, method = RequestMethod.POST)
-  public String submitDemo(@Valid @ModelAttribute(MODEL_DEMO) Demo demo,
-                           BindingResult result,
-                           ModelMap modelMap)
-  {
-    if (result.hasErrors()) {
-      modelMap.put(MODEL_DEMO, demo);
-      modelMap.put(MODEL_OPERATION, ControllerConstants.modelOperation(demo));
-      return withDemoRelatedPath(VIEW_DEMO);
+    @GetMapping(value = URL_DEMOS_ROOT)
+    public Mono<String> showAllDemos(Model model) {
+        model.addAttribute("demos", demoDrawService.findAll());
+        return withDemoRelatedPath("demos");
     }
-    else {
-      //submit and go to the list of members
-      demoDrawService.submit(demo);
-      return "redirect:" + URL_DEMOS_ROOT;
+
+
+    @GetMapping(value = URL_DEMOS_ROOT + "/form")
+    public Mono<String> showDemoCreateForm(Model model) {
+        Demo newDemo = new Demo();
+        newDemo.setPlannedDate(LocalDate.now());
+
+        model.addAttribute(MODEL_DEMO, newDemo);
+        model.addAttribute(MODEL_OPERATION, MODEL_OPERATION_CREATE);
+        return withDemoRelatedPath(VIEW_DEMO);
     }
-  }
 
 
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}", method = RequestMethod.DELETE)
-  @ResponseStatus(value = HttpStatus.OK)
-  public void deleteDemo(@PathVariable("demoId") final long demoId)
-  {
-    //TODO: handle EmptyResultDataAccessException??
-    demoDrawService.deleteById(demoId);
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/formtask", method = RequestMethod.GET)
-  String showDemo(ModelMap modal,
-                  @PathVariable("demoId") final long demoId)
-  {
-    modal.addAttribute("demo", demoDrawService.getOne(demoId));
-    return withDemoRelatedPath("demoWithTasks");
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/form", method = RequestMethod.GET)
-  public String showDemoTaskCreateForm(@PathVariable("demoId") final long demoId,
-                                       ModelMap modelMap)
-  {
-    withTaskModel(modelMap, demoDrawService.getOne(demoId), new DemoTask(), MODEL_OPERATION_CREATE);
-    return withDemoRelatedPath(VIEW_DEMO_TASK);
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/{taskId}/form", method = RequestMethod.GET)
-  public String showDemoTaskEditForm(@PathVariable("demoId") final long demoId,
-                                     @PathVariable("taskId") final long taskId,
-                                     ModelMap modelMap)
-  {
-    Demo demo = demoDrawService.getOne(demoId);
-    withTaskModel(
-        modelMap,
-        demoDrawService.getOne(demoId),
-        demo.getTaskById(taskId),
-        withDemoRelatedPath(MODEL_OPERATION_EDIT));
-    return withDemoRelatedPath(VIEW_DEMO_TASK);
-  }
-
-
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks", method = RequestMethod.POST)
-  public String submitDemoTask(@PathVariable("demoId") final long demoId,
-                               @Valid @ModelAttribute(MODEL_DEMO_TASK) DemoTask demoTask,
-                               BindingResult result,
-                               ModelMap modelMap)
-  {
-    Demo demo = demoDrawService.getOne(demoId);
-
-    if (result.hasErrors()) {
-      withTaskModel(modelMap, demo, demoTask, ControllerConstants.modelOperation(demoTask));
-      return withDemoRelatedPath(VIEW_DEMO_TASK);
+    @GetMapping(value = URL_DEMOS_ROOT + "/{demoId}/form")
+    public Mono<String> showDemoEditForm(@PathVariable("demoId") final long demoId,
+                                         Model model) {
+        model.addAttribute(MODEL_DEMO, demoDrawService.getOne(demoId));
+        model.addAttribute(MODEL_OPERATION, MODEL_OPERATION_EDIT);
+        return withDemoRelatedPath(VIEW_DEMO);
     }
-    else {
-      demoDrawService.submitTask(demo, demoTask);
-      return "redirect:" + URL_DEMOS_ROOT + "/" + demoId + "/formtask/";
+
+
+    @PostMapping(value = URL_DEMOS_ROOT)
+    public Mono<String> submitDemo(@Valid Demo demo,
+                                   BindingResult result,
+                                   Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute(MODEL_OPERATION, ControllerConstants.modelOperation(demo));
+            return withDemoRelatedPath(VIEW_DEMO);
+        } else {
+            //submit and go to the list of members
+            demoDrawService.submit(demo);
+            return Mono.just("redirect:" + URL_DEMOS_ROOT);
+        }
     }
-  }
 
 
-  @RequestMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/{taskId}", method = RequestMethod.DELETE)
-  @ResponseStatus(value = HttpStatus.OK)
-  public void deleteDemoTask(@PathVariable("demoId") final long demoId,
-                             @PathVariable("taskId") final long taskId)
-  {
-    //TODO: handle EmptyResultDataAccessException??
-    demoDrawService.deleteTask(demoDrawService.getOne(demoId), taskId);
-  }
+    @DeleteMapping(value = URL_DEMOS_ROOT + "/{demoId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Mono<Void> deleteDemo(@PathVariable("demoId") final long demoId) {
+        //TODO: handle EmptyResultDataAccessException??
+        demoDrawService.deleteById(demoId);
+        return Mono.empty();
+    }
 
 
-  private void withTaskModel(ModelMap modelMap, Demo demo, DemoTask task, String operation)
-  {
-    modelMap.put(MODEL_DEMO, demo);
-    modelMap.put(MODEL_DEMO_TASK, task);
-    modelMap.put(MODEL_MEMBERS,
-        teamMemberRepository.findActiveOnly()
-            .stream()
-            .map(DEFAULT_FORMATTER)
-            .sorted()
-            .collect(Collectors.toList())
-    );
-    modelMap.put(MODEL_OPERATION, operation);
-  }
+    @GetMapping(value = URL_DEMOS_ROOT + "/{demoId}/formtask")
+    public Mono<String> showDemo(Model model,
+                                 @PathVariable("demoId") final long demoId) {
+        model.addAttribute("demo", demoDrawService.getOne(demoId));
+        return withDemoRelatedPath("demoWithTasks");
+    }
+
+
+    @GetMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/form")
+    public Mono<String> showDemoTaskCreateForm(@PathVariable("demoId") final long demoId,
+                                               Model model) {
+        withTaskModel(model, demoDrawService.getOne(demoId), new DemoTask(), MODEL_OPERATION_CREATE);
+        return withDemoRelatedPath(VIEW_DEMO_TASK);
+    }
+
+
+    @GetMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/{taskId}/form")
+    public Mono<String> showDemoTaskEditForm(@PathVariable("demoId") final long demoId,
+                                             @PathVariable("taskId") final long taskId,
+                                             Model model) {
+        Demo demo = demoDrawService.getOne(demoId);
+        withTaskModel(
+                model,
+                demoDrawService.getOne(demoId),
+                demo.getTaskById(taskId),
+                withDemoRelatedPath(MODEL_OPERATION_EDIT).block());
+        return withDemoRelatedPath(VIEW_DEMO_TASK);
+    }
+
+
+    @PostMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks")
+    public Mono<String> submitDemoTask(@PathVariable("demoId") final long demoId,
+                                       @Valid DemoTask demoTask,
+                                       BindingResult result,
+                                       Model model) {
+        Demo demo = demoDrawService.getOne(demoId);
+
+        if (result.hasErrors()) {
+            withTaskModel(model, demo, demoTask, ControllerConstants.modelOperation(demoTask));
+            return withDemoRelatedPath(VIEW_DEMO_TASK);
+        } else {
+            demoDrawService.submitTask(demo, demoTask);
+            return Mono.just("redirect:" + URL_DEMOS_ROOT + "/" + demoId + "/formtask/");
+        }
+    }
+
+
+    @DeleteMapping(value = URL_DEMOS_ROOT + "/{demoId}/tasks/{taskId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Mono<Void> deleteDemoTask(@PathVariable("demoId") final long demoId,
+                                     @PathVariable("taskId") final long taskId) {
+        //TODO: handle EmptyResultDataAccessException??
+        demoDrawService.deleteTask(demoDrawService.getOne(demoId), taskId);
+        return Mono.empty();
+    }
+
+
+    private void withTaskModel(Model model, Demo demo, DemoTask task, String operation) {
+        model.addAttribute(MODEL_DEMO, demo);
+        model.addAttribute(MODEL_DEMO_TASK, task);
+        model.addAttribute(MODEL_MEMBERS,
+                teamMemberRepository.findActiveOnly()
+                        .stream()
+                        .map(DEFAULT_FORMATTER)
+                        .sorted()
+                        .collect(Collectors.toList())
+        );
+        model.addAttribute(MODEL_OPERATION, operation);
+    }
 
 
 }

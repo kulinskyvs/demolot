@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -30,89 +32,81 @@ import static org.springframework.data.domain.Sort.Order.asc;
  * @version 1.0
  */
 @Controller
-public class TeamMemberController
-{
-  private static final String ROOT_URL = "/teamembers";
-  private static final String MODEL_MEMBER = "member";
-  private static final String VIEW_MEMBER = "teammember";
+public class TeamMemberController {
+    private static final String ROOT_URL = "/teamembers";
+    private static final String MODEL_MEMBER = "teamMember";
+    private static final String VIEW_MEMBER = "teammember";
 
-  @Autowired
-  private TeamMemberRepository teamMemberRepository;
-
-
-  @RequestMapping(value = ROOT_URL, method = RequestMethod.GET)
-  public String showAllTeamMembers(ModelMap modal)
-  {
-    modal.addAttribute(
-        "members",
-        teamMemberRepository.findAll(Sort.by(asc("id")))
-    );
-    return withTeamRelatedPath("team");
-  }
+    @Autowired
+    private TeamMemberRepository teamMemberRepository;
 
 
-  @RequestMapping(value = ROOT_URL + "/form", method = RequestMethod.GET)
-  public String showCreateForm(ModelMap modelMap)
-  {
-    modelMap.put(MODEL_MEMBER, new TeamMember());
-    modelMap.put(MODEL_OPERATION, MODEL_OPERATION_CREATE);
-    return withTeamRelatedPath(VIEW_MEMBER);
-  }
-
-
-  @RequestMapping(value = ROOT_URL + "/{memberId}/form", method = RequestMethod.GET)
-  public String showEditForm(@PathVariable("memberId") final long memberId,
-                             ModelMap modelMap)
-  {
-    modelMap.put(MODEL_MEMBER, teamMemberRepository.findById(memberId));
-    modelMap.put(MODEL_OPERATION, MODEL_OPERATION_EDIT);
-    return withTeamRelatedPath(VIEW_MEMBER);
-  }
-
-
-  @RequestMapping(value = ROOT_URL, method = RequestMethod.POST)
-  public String submitMember(@Valid @ModelAttribute(MODEL_MEMBER) TeamMember member,
-                             BindingResult result,
-                             ModelMap modelMap)
-  {
-    if (result.hasErrors() || isUniquenessViolated(member, modelMap)) {
-      modelMap.put(MODEL_MEMBER, member);
-      modelMap.put(MODEL_OPERATION, ControllerConstants.modelOperation(member));
-      return withTeamRelatedPath(VIEW_MEMBER);
+    @GetMapping(value = ROOT_URL)
+    public Mono<String> showAllTeamMembers(Model model) {
+        model.addAttribute(
+                "members",
+                Flux.fromIterable(teamMemberRepository.findAll(Sort.by(asc("id"))))
+        );
+        return withTeamRelatedPath("team");
     }
-    else {
-      //save and go to the list of members
-      teamMemberRepository.save(member);
-      return "redirect:" + ROOT_URL;
+
+
+    @GetMapping(value = ROOT_URL + "/form")
+    public Mono<String> showCreateForm(Model model) {
+        model.addAttribute(MODEL_MEMBER, new TeamMember());
+        model.addAttribute(MODEL_OPERATION, MODEL_OPERATION_CREATE);
+        return withTeamRelatedPath(VIEW_MEMBER);
     }
-  }
 
 
-  @RequestMapping(value = ROOT_URL + "/{memberId}", method = RequestMethod.DELETE)
-  @ResponseStatus(value = HttpStatus.OK)
-  public void deleteMember(@PathVariable("memberId") final long memberId)
-  {
-    //TODO: handle EmptyResultDataAccessException??
-    teamMemberRepository.deleteById(memberId);
-  }
-
-
-  private boolean isUniquenessViolated(TeamMember member, ModelMap modelMap)
-  {
-    boolean isViolated = Optional
-        .ofNullable(teamMemberRepository.findByNameAndSurname(member.getName(), member.getSurname()))
-        .map(foundMember -> !foundMember.equalsById(member))
-        .orElse(false);
-
-    if (isViolated) {
-      modelMap.put("validationError", "A member with the same name and surname already exists");
+    @GetMapping(value = ROOT_URL + "/{memberId}/form")
+    public Mono<String> showEditForm(@PathVariable("memberId") final long memberId,
+                                     Model model) {
+        model.addAttribute(MODEL_MEMBER, teamMemberRepository.findById(memberId));
+        model.addAttribute(MODEL_OPERATION, MODEL_OPERATION_EDIT);
+        return withTeamRelatedPath(VIEW_MEMBER);
     }
-    return isViolated;
-  }
 
 
-  private static String withTeamRelatedPath(String relativePath)
-  {
-    return "team/" + relativePath;
-  }
+    @PostMapping(value = ROOT_URL)
+    public Mono<String> submitMember(@Valid TeamMember teamMember,
+                                     BindingResult result,
+                                     Model model) {
+        if (result.hasErrors() || isUniquenessViolated(teamMember, model)) {
+            model.addAttribute(MODEL_OPERATION, ControllerConstants.modelOperation(teamMember));
+            return withTeamRelatedPath(VIEW_MEMBER);
+        } else {
+            //save and go to the list of members
+            teamMemberRepository.save(teamMember);
+            return Mono.just("redirect:" + ROOT_URL);
+        }
+    }
+
+
+    @DeleteMapping(value = ROOT_URL + "/{memberId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Mono<Void> deleteMember(@PathVariable("memberId") final long memberId) {
+        //TODO: handle EmptyResultDataAccessException??
+        teamMemberRepository.deleteById(memberId);
+        return Mono.empty();
+    }
+
+
+    private boolean isUniquenessViolated(TeamMember member, Model model) {
+//        TODO: refactor to reactive
+        boolean isViolated = Optional
+                .ofNullable(teamMemberRepository.findByNameAndSurname(member.getName(), member.getSurname()))
+                .map(foundMember -> !foundMember.equalsById(member))
+                .orElse(false);
+
+        if (isViolated) {
+            model.addAttribute("validationError", "A member with the same name and surname already exists");
+        }
+        return isViolated;
+    }
+
+
+    private static Mono<String> withTeamRelatedPath(String relativePath) {
+        return Mono.just("team/" + relativePath);
+    }
 }

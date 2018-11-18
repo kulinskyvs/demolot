@@ -1,0 +1,72 @@
+<data-th-block data-th-insert="~{tiles/header}"/>
+
+<div class="container mt-3">
+
+    <div class="row">
+        <div class="col-md-6 text-left">
+            <h2>Team members</h2>
+        </div>
+        <div class="col-md-6 text-right">
+            <a role="button" class="btn btn-primary" href="/teamembers/form">Create</a>
+        </div>
+    </div>
+
+    <div class="row" style="min-height: 500px;">
+        <div class="table-responsive">
+            <table class="table table-striped table-sm table-hover">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Email</th>
+                    <th>Active?</th>
+                    <th/>
+                </tr>
+                </thead>
+                <tbody>
+                <tr data-th-each="member : ${members}" data-th-class="${member.active} ? 'text-danger' : ''">
+                    <td data-th-text="${member.id}"/>
+                    <td data-th-text="${member.name}"/>
+                    <td data-th-text="${member.surname}"/>
+                    <td data-th-text="${member.email}"/>
+                    <td data-th-text="${member.active} ? 'yes' : 'no'"/>
+                    <td style="width:25%;text-align:right;white-space:nowrap">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secomdary dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                Actions..
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item"
+                                   data-th-href="@{/teamembers/{id}/form(id=${member.id})}">Edit</a>
+                                <button class="dropdown-item" type="button"
+                                        data-th-onclick="'deleteMember(' + ${member.id} + ')'">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+
+
+<script type="text/javascript">
+    function deleteMember(memberId) {
+      doDeleteAndReload(
+        'Do you really want to delete the selected team member?',
+        "/teamembers/"+memberId,
+        '/teamembers'
+      );
+    }
+
+
+
+</script>
+
+<data-th-block data-th-insert="~{tiles/footer}"/>

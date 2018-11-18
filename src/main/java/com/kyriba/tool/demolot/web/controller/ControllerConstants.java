@@ -9,6 +9,7 @@
 package com.kyriba.tool.demolot.web.controller;
 
 import com.kyriba.tool.demolot.domain.HasLongId;
+import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
@@ -21,8 +22,9 @@ public final class ControllerConstants
 {
   public static final String MODEL_OPERATION = "operation";
   public static final String MODEL_DEMO = "demo";
+  public static final String MODEL_DEMO_TASKS = "demoTasks";
   public static final String MODEL_MEMBERS = "members";
-  public static final String MODEL_DEMO_TASK = "task";
+  public static final String MODEL_DEMO_TASK = "demoTask";
 
   public static final String MODEL_OPERATION_CREATE = "Create";
   public static final String MODEL_OPERATION_EDIT = "Edit";
@@ -41,8 +43,8 @@ public final class ControllerConstants
   }
 
 
-  public static String withDemoRelatedPath(String relativePath)
+  public static Mono<String> withDemoRelatedPath(String relativePath)
   {
-    return "demo/" + relativePath;
+    return Mono.just("demo/" + relativePath);
   }
 }
