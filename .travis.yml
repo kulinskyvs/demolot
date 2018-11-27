@@ -1,0 +1,36 @@
+language: java
+jdk:
+  - openjdk11
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+sudo: required
+#services:
+#  - docker
+notifications:
+  email:
+    - kulinskyvs@gmail.com
+  on_success: always
+  on_failure: always
+branches:
+  only:
+    - master
+env:
+  global:
+before_install:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+#  - gem install travis -v 1.8.5 --no-rdoc --no-ri
+#  - sudo curl -k -o /usr/local/bin/ecs-cli https://s3.amazonaws.com/amazon-ecs-cli/ecs-cli-linux-amd64-latest
+#  - sudo chmod +x /usr/local/bin/ecs-cli
+#  - export BUILD_NAME=chapter10-$TRAVIS_BRANCH-$(date -u "+%Y%m%d%H%M%S")-$TRAVIS_BUILD_NUMBER
+#  - export CONTAINER_IP=54.215.193.139
+#  - export PLATFORM_TEST_NAME="chapter10-platform-tests"
+script:
+  - ./gradlew clean build
+#  - sh travis_scripts/tag_build.sh
+#  - sh travis_scripts/build_services.sh
+#  - sh travis_scripts/deploy_to_docker_hub.sh
+#  - sh travis_scripts/deploy_to_amazon_ecs.sh
+# sh travis_scripts/trigger_platform_tests.sh
