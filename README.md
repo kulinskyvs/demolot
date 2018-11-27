@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/kulinskyvs/demolot.svg?branch=master)](https://travis-ci.org/kulinskyvs/demolot.svg)
+[![Build Status](https://travis-ci.org/kulinskyvs/demolot.svg?branch=master)](https://travis-ci.org/kulinskyvs/demolot)
 [TODO: coveralls]
 [TODO: code climate]
 
