@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/kulinskyvs/demolot.svg?branch=master)](https://travis-ci.org/kulinskyvs/demolot.svg)
+[TODO: coveralls]
+[TODO: code climate]
+
 # Demolot
 
 Demolot is a simple application intended to turn the process of deciding who is responsible to show a task on 
