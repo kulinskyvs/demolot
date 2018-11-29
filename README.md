@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/kulinskyvs/demolot.svg?branch=master)](https://travis-ci.org/kulinskyvs/demolot)
-[TODO: coveralls]
+[![Coverage Status](https://coveralls.io/repos/github/kulinskyvs/demolot/badge.svg?branch=master)](https://coveralls.io/github/kulinskyvs/demolot?branch=master)
 [TODO: code climate]
 
 # Demolot
