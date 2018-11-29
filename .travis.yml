@@ -1,23 +1,38 @@
 language: java
 jdk:
   - openjdk10
+
 cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
 sudo: required
 #services:
 #  - docker
+
 notifications:
   email:
     - kulinskyvs@gmail.com
   on_success: always
   on_failure: always
+
+dist: trusty
+
 branches:
   only:
     - master
+
 env:
   global:
+
+addons:
+  sonarcloud:
+    organization: "kulinskyvs-github" # the key of the org from sonar cloud
+    token:
+      # encrypted value of your token from sonar cloud
+      secure: m8hV5D9xCfONZoHG2K+7M8MflhBIb159Dlw0rrqEbmme+l+FbGR0JgXR532w0tzLYYAW+NA1BaNz5lXkek9KOvI0eLtrwFgN7S5t9U7iH4gfpSVLKoWvw8oojwgcLxpnDg9EWpSutDJ13yk2FfRMzYYdU3jl594lIJLD9lYIpumZXoPSZYcZa+w7sUK7avPcHW0f26pfzfRIhZ0kXO4VKorNg6cQCF08nIhDgsrdxwyd5z+g5/1Mu4bXGZOxMqQLsQ++Tum2Zn/4vBZVQOodvhoN/cLRMwlrPbFWEZ+4kgroswJjKkzlXTrVNSF0levNUp+zKyzczeiKQeDMMo4vp771GSwhooiTGvBoXUJitlpIrKGEneq2YJhUEdmEZarpY0osC+CTS8Pac5ZHaqhwrZ2IY2PNfCl9mFdb9YqvYfxCyE6RatufMM+apaeFrIYbdtVVeNP7fP90gJqjs4cJYjScHyguGEPAVKl65jgWCHfGRH/g3UbQpsM3lMGwNVK9p99WAH8vQDvjKceRJAmKOpwPOysSTGS4Qvc4BUWndC9xKm+xplD2ZOueqkqEUre7h6ekjAPuaxqDjifFrUEIArUx4vaD0IDIjlQ1R3mxXCGQrh5cHiL1cr5n4UxOOMVrZlhcFvYmv25+9DEnEc/rODgDurUvtdriKWNieDeu++U=
+
 before_install:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -27,6 +42,7 @@ before_install:
 #  - export BUILD_NAME=chapter10-$TRAVIS_BRANCH-$(date -u "+%Y%m%d%H%M%S")-$TRAVIS_BUILD_NUMBER
 #  - export CONTAINER_IP=54.215.193.139
 #  - export PLATFORM_TEST_NAME="chapter10-platform-tests"
+
 script:
   - ./gradlew clean build
 #  - sh travis_scripts/tag_build.sh
@@ -34,6 +50,8 @@ script:
 #  - sh travis_scripts/deploy_to_docker_hub.sh
 #  - sh travis_scripts/deploy_to_amazon_ecs.sh
 # sh travis_scripts/trigger_platform_tests.sh
+
 after_success:
   - ./gradlew jacocoTestReport coveralls
+  - sonar-scanner
 
