@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/kulinskyvs/demolot.svg?branch=master)](https://travis-ci.org/kulinskyvs/demolot)
 [![Coverage Status](https://coveralls.io/repos/github/kulinskyvs/demolot/badge.svg?branch=master)](https://coveralls.io/github/kulinskyvs/demolot?branch=master)
-[TODO: code climate]
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=kulinskyvs_demolot&metric=alert_status)](https://sonarcloud.io/dashboard?id=kulinskyvs_demolot)
 
 # Demolot
 

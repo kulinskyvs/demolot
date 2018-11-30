@@ -44,7 +44,7 @@ before_install:
 #  - export PLATFORM_TEST_NAME="chapter10-platform-tests"
 
 script:
-  - ./gradlew clean build
+  - ./gradlew clean build jacocoTestReport
   - sonar-scanner
 #  - sh travis_scripts/tag_build.sh
 #  - sh travis_scripts/build_services.sh
@@ -53,6 +53,6 @@ script:
 # sh travis_scripts/trigger_platform_tests.sh
 
 after_success:
-  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew coveralls
 
 
