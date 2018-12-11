@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -46,7 +47,6 @@ import static org.junit.Assert.assertThat;
 @DirtiesContext
 @SpringBootTest(classes = DemolotApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource(locations="classpath:test.properties")
 public class DemoRepositoryIT
 {
   static final String DATASET = "classpath:datasets/domain.xml";

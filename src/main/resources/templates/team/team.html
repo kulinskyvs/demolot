@@ -25,7 +25,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr data-th-each="member : ${members}" data-th-class="${member.active} ? 'text-danger' : ''">
+                <tr data-th-each="member : ${members}" data-th-class="${member.active} ? '' : 'text-danger'">
                     <td data-th-text="${member.id}"/>
                     <td data-th-text="${member.name}"/>
                     <td data-th-text="${member.surname}"/>

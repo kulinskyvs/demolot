@@ -16,35 +16,52 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.kyriba.tool'
-version = '1.0.3-SNAPSHOT'
+version = '1.0.4-SNAPSHOT'
 sourceCompatibility = 1.10
+
+ext {
+    postgresVersion = "42.2.5"
+    liquibaseVersion = '3.6.1'
+
+    jaxbApiVersion = '2.3.0'
+    apacheCommonsLangVersion = '3.7'
+    guavaVersion = '25.1-jre'
+
+    springDbUnitVersion = '1.2.0'
+    dbUnitVersion = '2.5.0'
+}
 
 repositories {
     mavenCentral()
 }
 
-
 dependencies {
-    compile('javax.xml.bind:jaxb-api:2.3.0')
-    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    //core
+    compile("com.google.guava:guava:$guavaVersion")
+    compile("org.apache.commons:commons-lang3:$apacheCommonsLangVersion")
+    compile("javax.xml.bind:jaxb-api:$jaxbApiVersion")
+    compile('org.springframework.boot:spring-boot-starter-mail')
+
+    // web
     compile('org.springframework.boot:spring-boot-starter-webflux')
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-    compile('org.springframework.boot:spring-boot-starter-mail')
+
+    // database
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtime("org.postgresql:postgresql:$postgresVersion")
+    runtime("org.liquibase:liquibase-core:$liquibaseVersion")
+
+    //dev
     compile('org.springframework.boot:spring-boot-devtools')
-    compile('org.apache.commons:commons-lang3:3.7')
-    compile('com.google.guava:guava:25.1-jre')
-    runtime('org.postgresql:postgresql')
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile('com.github.springtestdbunit:spring-test-dbunit:1.2.0')
-    testCompile('org.dbunit:dbunit:2.5.0')
+    testCompile("com.github.springtestdbunit:spring-test-dbunit:$springDbUnitVersion")
+    testCompile("org.dbunit:dbunit:$dbUnitVersion")
     testCompile('com.h2database:h2')
-
 }
 
 jacocoTestReport {

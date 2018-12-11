@@ -36,7 +36,6 @@ import static org.junit.Assert.assertThat;
 @DirtiesContext
 @SpringBootTest(classes = DemolotApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource(locations="classpath:test.properties")
 public class TeamMemberRepositoryIT
 {
 
