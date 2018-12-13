@@ -46,6 +46,7 @@ before_install:
 script:
   - ./gradlew clean build jacocoTestReport
   - sonar-scanner
+  - ./gradlew tagRevision
 #  - sh travis_scripts/tag_build.sh
 #  - sh travis_scripts/build_services.sh
 #  - sh travis_scripts/deploy_to_docker_hub.sh

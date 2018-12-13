@@ -1,0 +1,46 @@
+ext.getNextVersion = { tagVersionDetailsI, defaultVersionStrI, keepVersionIfNoChange ->
+    if (keepVersionIfNoChange) {
+        if (0 == tagVersionDetailsI.commitDistance) {
+            return tagVersionDetailsI.lastTag;
+        }
+    }
+
+    def nextVersion = getNextStrVersion(tagVersionDetailsI.lastTag, defaultVersionStrI);
+
+    return nextVersion;
+};
+
+
+ext.getNextStrVersion = { versionStr, defaultVersionStr ->
+    def versionArr = versionStr.split('\\.');
+    def lastElem = versionArr[versionArr.size() - 1];
+
+    try {
+        def iLastElem = Integer.parseInt(lastElem);
+        def newMinor = iLastElem + 1;
+        versionArr[versionArr.size() - 1] = newMinor;
+        def newVersion = versionArr.join(".");
+        return newVersion;
+    }
+    catch (Exception e) {
+    }
+
+    return defaultVersionStr;
+}
+
+ext.getPrevStrVersion = { versionStr ->
+    def versionArr = versionStr.split('\\.');
+    def lastElem = versionArr[versionArr.size() - 1];
+
+    try {
+        def iLastElem = Integer.parseInt(lastElem);
+        def newMinor = iLastElem - 1;
+        versionArr[versionArr.size() - 1] = newMinor;
+        def newVersion = versionArr.join(".");
+        return newVersion;
+    }
+    catch (Exception e) {
+    }
+
+    return versionStr;
+}
