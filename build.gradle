@@ -47,7 +47,7 @@ ext {
 
 }
 
-group = 'com.kyriba.tool'
+group = 'org.vkulinski.tool'
 version = project.hasProperty('forceVersion') ?
         "$forceVersion" : getNextVersion(gitTagVersionDetails, gitTagVersion, true)
 sourceCompatibility = 1.10
