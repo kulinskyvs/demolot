@@ -54,6 +54,8 @@ sourceCompatibility = 1.10
 buildDir = 'out';
 
 println("version = " + version)
+println("GRGIT_USER=$System.env.GRGIT_USER")
+println("GRGIT_PASS=$System.env.GRGIT_PASS")
 
 repositories {
     mavenCentral()
