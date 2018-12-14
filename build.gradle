@@ -44,7 +44,9 @@ ext {
 
     springDbUnitVersion = '1.2.0'
     dbUnitVersion = '2.5.0'
-
+    equalsVerifierVersion = '3.0.3'
+    toStringVerifierVersion = '1.4.4'
+    meanBeanVersion = '2.0.3'
 }
 
 group = 'org.vkulinski.tool'
@@ -84,6 +86,9 @@ dependencies {
     testCompile("com.github.springtestdbunit:spring-test-dbunit:$springDbUnitVersion")
     testCompile("org.dbunit:dbunit:$dbUnitVersion")
     testCompile('com.h2database:h2')
+    testCompile("nl.jqno.equalsverifier:equalsverifier:$equalsVerifierVersion")
+    testCompile("com.jparams:to-string-verifier:$toStringVerifierVersion")
+    testCompile("org.meanbean:meanbean:$meanBeanVersion")
 }
 
 jacocoTestReport {

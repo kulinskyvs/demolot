@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  */
 public class TeamMemberPropertyEditor extends PropertyEditorSupport
 {
-  public static Function<TeamMember, String> DEFAULT_FORMATTER = member -> Optional
+  public static final Function<TeamMember, String> DEFAULT_FORMATTER = member -> Optional
       .ofNullable(member)
       .map(safeMember -> safeMember.getName() + " " + safeMember.getSurname())
       .orElse("");

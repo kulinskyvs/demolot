@@ -66,11 +66,6 @@ public class Demo implements HasLongId
   private DrawStatus drawStatus = DrawStatus.PREPARATION;
 
 
-  public Demo()
-  {
-  }
-
-
   public Long getId()
   {
     return id;
@@ -159,7 +154,7 @@ public class Demo implements HasLongId
   public boolean equals(Object o)
   {
     if (this == o) return true;
-    if (o == null || !(o instanceof Demo)) return false;
+    if (!(o instanceof Demo)) return false;
 
     Demo that = (Demo) o;
     return new EqualsBuilder()

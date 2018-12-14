@@ -168,7 +168,7 @@
                                 <tr>
                                     <td align="center" style="height:70px;">
                                         <a href="" style="display: block; border-style: none !important; border: 0 !important;">
-                                          <img border="0" style="display: block; width: 50%; height:50%" src="cid:logo.png" />
+                                          <img border="0" style="display: block; width: 50%; height:50%" src="cid:logo.png" alt="Logo"/>
                                         </a>
                                     </td>
                                 </tr>
@@ -213,14 +213,14 @@
                                         </p>
                                         <p style="line-height: 24px; margin-bottom:20px;">
                                             Below are the tasks that you are in charge of showing during the
-                                             <b data-th-unless="${#strings.isEmpty(demo.link)}">
+                                             <strong data-th-unless="${#strings.isEmpty(demo.link)}">
                                                    <a target="_blank"
                                                       data-th-href="@{{link}(link=${demo.link})}"
                                                       data-th-text="${demo.title}">title</a>
-                                            </b>
-                                            <b data-th-if="${#strings.isEmpty(demo.link)}"
-                                               data-th-text="${demo.title}"></b>
-                                            which is supposed to be done on <b data-th-text="${demo.plannedDate}"></b>:
+                                            </strong>
+                                            <strong data-th-if="${#strings.isEmpty(demo.link)}"
+                                               data-th-text="${demo.title}"></strong>
+                                            which is supposed to be done on <strong data-th-text="${demo.plannedDate}"></strong>:
                                         </p>
                                         <table border="0" align="center" width="590" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
 

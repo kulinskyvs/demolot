@@ -6,8 +6,8 @@ import org.vkulinski.demolot.domain.Demo;
 import org.vkulinski.demolot.domain.DemoTask;
 import org.vkulinski.demolot.domain.TeamMember;
 
+import java.security.SecureRandom;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 
@@ -28,7 +28,7 @@ public class DrawWinnerFinder
     this(
         demo,
         fromMembers,
-        new Random()::nextInt
+        new SecureRandom()::nextInt
     );
   }
 
